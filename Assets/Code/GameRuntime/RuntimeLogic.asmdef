@@ -1,0 +1,16 @@
+{
+    "name": "RuntimeLogic",
+    "rootNamespace": "",
+    "references": [
+        "GUID:f6ff42b3755160a44a434b12e91f085f"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": true,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
