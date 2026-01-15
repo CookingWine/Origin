@@ -17,34 +17,34 @@ namespace OriginRuntime
 
             #region 控制协程Coroutine
 
-            public static GameCoroutine StartCoroutine(string name, IEnumerator routine, MonoBehaviour bindBehaviour)
+            public static GameCoroutine StartCoroutine(string name , IEnumerator routine , MonoBehaviour bindBehaviour)
             {
-                if (bindBehaviour == null)
+                if(bindBehaviour == null)
                 {
-                    Log.Error("StartCoroutine {0} failed, bindBehaviour is null", name);
+                    Log.Error("StartCoroutine {0} failed, bindBehaviour is null" , name);
                     return null;
                 }
 
                 var behaviour = bindBehaviour;
-                return StartCoroutine(behaviour, name, routine);
+                return StartCoroutine(behaviour , name , routine);
             }
 
-            public static GameCoroutine StartCoroutine(string name, IEnumerator routine, GameObject bindGo)
+            public static GameCoroutine StartCoroutine(string name , IEnumerator routine , GameObject bindGo)
             {
-                if (bindGo == null)
+                if(bindGo == null)
                 {
-                    Log.Error("StartCoroutine {0} failed, BindGo is null", name);
+                    Log.Error("StartCoroutine {0} failed, BindGo is null" , name);
                     return null;
                 }
 
                 var behaviour = GetDefaultBehaviour(bindGo);
-                return StartCoroutine(behaviour, name, routine);
+                return StartCoroutine(behaviour , name , routine);
             }
 
-            public static GameCoroutine StartGlobalCoroutine(string name, IEnumerator routine)
+            public static GameCoroutine StartGlobalCoroutine(string name , IEnumerator routine)
             {
                 var coroutine = StartCoroutine(routine);
-                var gameCoroutine = new GameCoroutine();
+                var gameCoroutine = new GameCoroutine( );
                 gameCoroutine.Coroutine = coroutine;
                 gameCoroutine.Name = name;
                 gameCoroutine.BindBehaviour = null;
@@ -53,10 +53,10 @@ namespace OriginRuntime
 
             public static void StopCoroutine(GameCoroutine coroutine)
             {
-                if (coroutine.Coroutine != null)
+                if(coroutine.Coroutine != null)
                 {
                     var behaviour = coroutine.BindBehaviour;
-                    if (behaviour != null)
+                    if(behaviour != null)
                     {
                         behaviour.StopCoroutine(coroutine.Coroutine);
                     }
@@ -66,10 +66,10 @@ namespace OriginRuntime
                 }
             }
 
-            private static GameCoroutine StartCoroutine(MonoBehaviour behaviour, string name, IEnumerator routine)
+            private static GameCoroutine StartCoroutine(MonoBehaviour behaviour , string name , IEnumerator routine)
             {
                 var coroutine = behaviour.StartCoroutine(routine);
-                var gameCoroutine = new GameCoroutine();
+                var gameCoroutine = new GameCoroutine( );
                 gameCoroutine.Coroutine = coroutine;
                 gameCoroutine.Name = name;
                 gameCoroutine.BindBehaviour = behaviour;
@@ -78,14 +78,14 @@ namespace OriginRuntime
 
             private static GameCoroutineAgent GetDefaultBehaviour(GameObject bindGameObject)
             {
-                if (bindGameObject != null)
+                if(bindGameObject != null)
                 {
-                    if (bindGameObject.TryGetComponent(out GameCoroutineAgent coroutineBehaviour))
+                    if(bindGameObject.TryGetComponent(out GameCoroutineAgent coroutineBehaviour))
                     {
                         return coroutineBehaviour;
                     }
 
-                    return bindGameObject.AddComponent<GameCoroutineAgent>();
+                    return bindGameObject.AddComponent<GameCoroutineAgent>( );
                 }
 
                 return null;
@@ -94,75 +94,75 @@ namespace OriginRuntime
 
             public static Coroutine StartCoroutine(string methodName)
             {
-                if (string.IsNullOrEmpty(methodName))
+                if(string.IsNullOrEmpty(methodName))
                 {
                     return null;
                 }
 
-                _MakeEntity();
+                MakeEntity( );
                 return s_UpdateDriver.StartCoroutine(methodName);
             }
 
             public static Coroutine StartCoroutine(IEnumerator routine)
             {
-                if (routine == null)
+                if(routine == null)
                 {
                     return null;
                 }
 
-                _MakeEntity();
+                MakeEntity( );
                 return s_UpdateDriver.StartCoroutine(routine);
             }
 
-            public static Coroutine StartCoroutine(string methodName, [DefaultValue("null")] object value)
+            public static Coroutine StartCoroutine(string methodName , [DefaultValue("null")] object value)
             {
-                if (string.IsNullOrEmpty(methodName))
+                if(string.IsNullOrEmpty(methodName))
                 {
                     return null;
                 }
 
-                _MakeEntity();
-                return s_UpdateDriver.StartCoroutine(methodName, value);
+                MakeEntity( );
+                return s_UpdateDriver.StartCoroutine(methodName , value);
             }
 
             public static void StopCoroutine(string methodName)
             {
-                if (string.IsNullOrEmpty(methodName))
+                if(string.IsNullOrEmpty(methodName))
                 {
                     return;
                 }
 
-                _MakeEntity();
+                MakeEntity( );
                 s_UpdateDriver.StopCoroutine(methodName);
             }
 
             public static void StopCoroutine(IEnumerator routine)
             {
-                if (routine == null)
+                if(routine == null)
                 {
                     return;
                 }
 
-                _MakeEntity();
+                MakeEntity( );
                 s_UpdateDriver.StopCoroutine(routine);
             }
 
             public static void StopCoroutine(Coroutine routine)
             {
-                if (routine == null)
+                if(routine == null)
                 {
                     return;
                 }
 
-                _MakeEntity();
+                MakeEntity( );
                 s_UpdateDriver.StopCoroutine(routine);
                 routine = null;
             }
 
-            public static void StopAllCoroutines()
+            public static void StopAllCoroutines( )
             {
-                _MakeEntity();
-                s_UpdateDriver.StopAllCoroutines();
+                MakeEntity( );
+                s_UpdateDriver.StopAllCoroutines( );
             }
 
             #endregion
@@ -175,13 +175,13 @@ namespace OriginRuntime
             /// <param name="fun"></param>
             public static void AddUpdateListener(Action fun)
             {
-                _MakeEntity();
-                AddUpdateListenerImp(fun).Forget();
+                MakeEntity( );
+                AddUpdateListenerImp(fun).Forget( );
             }
 
             private static async UniTaskVoid AddUpdateListenerImp(Action fun)
             {
-                await UniTask.Yield( /*PlayerLoopTiming.LastPreUpdate*/);
+                await UniTask.Yield( );
                 s_UpdateDriver.AddUpdateListener(fun);
             }
 
@@ -191,8 +191,8 @@ namespace OriginRuntime
             /// <param name="fun"></param>
             public static void AddFixedUpdateListener(Action fun)
             {
-                _MakeEntity();
-                AddFixedUpdateListenerImp(fun).Forget();
+                MakeEntity( );
+                AddFixedUpdateListenerImp(fun).Forget( );
             }
 
             private static async UniTaskVoid AddFixedUpdateListenerImp(Action fun)
@@ -207,8 +207,8 @@ namespace OriginRuntime
             /// <param name="fun"></param>
             public static void AddLateUpdateListener(Action fun)
             {
-                _MakeEntity();
-                AddLateUpdateListenerImp(fun).Forget();
+                MakeEntity( );
+                AddLateUpdateListenerImp(fun).Forget( );
             }
 
             private static async UniTaskVoid AddLateUpdateListenerImp(Action fun)
@@ -223,7 +223,7 @@ namespace OriginRuntime
             /// <param name="fun"></param>
             public static void RemoveUpdateListener(Action fun)
             {
-                _MakeEntity();
+                MakeEntity( );
                 s_UpdateDriver.RemoveUpdateListener(fun);
             }
 
@@ -233,7 +233,7 @@ namespace OriginRuntime
             /// <param name="fun"></param>
             public static void RemoveFixedUpdateListener(Action fun)
             {
-                _MakeEntity();
+                MakeEntity( );
                 s_UpdateDriver.RemoveFixedUpdateListener(fun);
             }
 
@@ -243,7 +243,7 @@ namespace OriginRuntime
             /// <param name="fun"></param>
             public static void RemoveLateUpdateListener(Action fun)
             {
-                _MakeEntity();
+                MakeEntity( );
                 s_UpdateDriver.RemoveLateUpdateListener(fun);
             }
 
@@ -257,7 +257,7 @@ namespace OriginRuntime
             /// <param name="fun"></param>
             public static void AddDestroyListener(Action fun)
             {
-                _MakeEntity();
+                MakeEntity( );
                 s_UpdateDriver.AddDestroyListener(fun);
             }
 
@@ -267,7 +267,7 @@ namespace OriginRuntime
             /// <param name="fun"></param>
             public static void RemoveDestroyListener(Action fun)
             {
-                _MakeEntity();
+                MakeEntity( );
                 s_UpdateDriver.RemoveDestroyListener(fun);
             }
 
@@ -277,7 +277,7 @@ namespace OriginRuntime
             /// <param name="fun"></param>
             public static void AddOnDrawGizmosListener(Action fun)
             {
-                _MakeEntity();
+                MakeEntity( );
                 s_UpdateDriver.AddOnDrawGizmosListener(fun);
             }
 
@@ -287,7 +287,7 @@ namespace OriginRuntime
             /// <param name="fun"></param>
             public static void RemoveOnDrawGizmosListener(Action fun)
             {
-                _MakeEntity();
+                MakeEntity( );
                 s_UpdateDriver.RemoveOnDrawGizmosListener(fun);
             }
 
@@ -297,7 +297,7 @@ namespace OriginRuntime
             /// <param name="fun"></param>
             public static void AddOnApplicationPauseListener(Action<bool> fun)
             {
-                _MakeEntity();
+                MakeEntity( );
                 s_UpdateDriver.AddOnApplicationPauseListener(fun);
             }
 
@@ -307,26 +307,26 @@ namespace OriginRuntime
             /// <param name="fun"></param>
             public static void RemoveOnApplicationPauseListener(Action<bool> fun)
             {
-                _MakeEntity();
+                MakeEntity( );
                 s_UpdateDriver.RemoveOnApplicationPauseListener(fun);
             }
 
             #endregion
 
-            private static void _MakeEntity()
+            private static void MakeEntity( )
             {
-                if (s_UpdateDriver != null)
+                if(s_UpdateDriver != null)
                 {
                     return;
                 }
 
-                s_UpdateDriver = ArchitectureCore.GetSystem<IMonoBehaviourDriver>();
+                s_UpdateDriver = ArchitectureCore.GetSystem<IMonoBehaviourDriver>( );
             }
 
             #region FindObjectOfType
-            public static T FindObjectOfType<T>() where T : UnityEngine.Object
+            public static T FindObjectOfType<T>( ) where T : UnityEngine.Object
             {
-                return UnityEngine.Object.FindFirstObjectByType<T>();
+                return UnityEngine.Object.FindFirstObjectByType<T>( );
             }
 
             #endregion
@@ -339,7 +339,7 @@ namespace OriginRuntime
             public MonoBehaviour BindBehaviour;
         }
 
-        class GameCoroutineAgent : MonoBehaviour
+        class GameCoroutineAgent:MonoBehaviour
         {
         }
     }
