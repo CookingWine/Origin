@@ -26,9 +26,12 @@ namespace RuntimeLogic
         {
             //初始化时间切片
             _gameTimeSlicing = new TimeSlicing( );
-
+            System.Diagnostics.Stopwatch stopwatch = new System.Diagnostics.Stopwatch( );
+            stopwatch.Start( );
             //TODO:示例注册===>ArchitectureCore.BindSystemSingleton<interface>(c => new class:interface( ));
-
+            BindSystemArchitecture( );
+            stopwatch.Stop( );
+            Debug.Log($"{stopwatch.ElapsedMilliseconds}ms");
             DontDestroyOnLoad(this);
         }
 
@@ -47,6 +50,11 @@ namespace RuntimeLogic
         {
             StopAllCoroutines( );
             ArchitectureCore.ShutdownArchitecture( );
+        }
+
+        private void BindSystemArchitecture( )
+        {
+            ArchitectureCore.BindSystemSingleton<IMonoBehaviourDriver>(mono => new MonoDriver( ));
         }
     }
 }
