@@ -2,7 +2,13 @@
     "name": "RuntimeLogic",
     "rootNamespace": "",
     "references": [
-        "GUID:f6ff42b3755160a44a434b12e91f085f"
+        "GUID:f6ff42b3755160a44a434b12e91f085f",
+        "GUID:13ba8ce62aa80c74598530029cb2d649",
+        "GUID:2a81c6962524d424a8ef5072bd3b0fa0",
+        "GUID:f51ebe6a0ceec4240a699833d6309b23",
+        "GUID:e34a5702dd353724aa315fb8011f08c3",
+        "GUID:4140bd2e2764f1f47ab93125ecb61942",
+        "GUID:6055be8ebefd69e48b49212b09b47b2f"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

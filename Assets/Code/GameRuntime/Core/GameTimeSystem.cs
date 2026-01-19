@@ -19,23 +19,10 @@ namespace RuntimeLogic
         /// </summary>
         public FixedTime Fixed { get; private set; }
 
-        /// <summary>
-        /// 是否已初始化
-        /// </summary>
-        public bool Initialized { get; private set; }
-
-        /// <summary>
-        /// 初始化（只允许调用一次）
-        /// </summary>
-        public void Initialize( )
+        public GameTimeSystem( )
         {
-            if(Initialized)
-                throw new InvalidOperationException("GameTimeSystem already initialized.");
-
             Frame = new FrameTime( );
             Fixed = new FixedTime( );
-
-            Initialized = true;
         }
 
         /// <summary>
@@ -43,8 +30,6 @@ namespace RuntimeLogic
         /// </summary>
         public void BeginFrame( )
         {
-            EnsureInitialized( );
-
             Frame.Sample(Time.time , Time.deltaTime , Time.unscaledDeltaTime , Time.unscaledTime , Time.frameCount);
         }
 
@@ -53,15 +38,7 @@ namespace RuntimeLogic
         /// </summary>
         public void BeginFixedFrame( )
         {
-            EnsureInitialized( );
-
             Fixed.Sample(Time.fixedTime , Time.fixedDeltaTime);
-        }
-
-        private void EnsureInitialized( )
-        {
-            if(!Initialized)
-                throw new InvalidOperationException("GameTimeSystem not initialized.");
         }
     }
 }
