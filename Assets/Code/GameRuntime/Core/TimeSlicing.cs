@@ -1,13 +1,12 @@
-using System;
 using UnityEngine;
 
 namespace RuntimeLogic
 {
     /// <summary>
-    /// 游戏时间系统（帧级权威时间源）
+    /// 游戏时间切片（帧级权威时间源）
     /// 只允许在 Update 中推进
     /// </summary>
-    public sealed class GameTimeSystem
+    public sealed class TimeSlicing
     {
         /// <summary>
         /// 当前帧时间快照
@@ -19,7 +18,10 @@ namespace RuntimeLogic
         /// </summary>
         public FixedTime Fixed { get; private set; }
 
-        public GameTimeSystem( )
+        /// <summary>
+        /// 初始化游戏时间切片
+        /// </summary>
+        public TimeSlicing( )
         {
             Frame = new FrameTime( );
             Fixed = new FixedTime( );

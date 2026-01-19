@@ -5,112 +5,109 @@ namespace OriginRuntime
 {
     /// <summary>
     /// 轻量级 IoC（控制反转）容器实现
-    /// 核心能力：支持单例（Singleton）和瞬时（Transient）两种生命周期的服务注册与解析
-    /// 设计目标：高性能、逻辑可控、无隐式的“魔法命名推断”，仅依赖显式注册的工厂方法/实例
+    /// 只做依赖注入：注册/解析/生命周期（Singleton/Transient）
+    /// 通过可选 Hook 把“服务创建/首次解析”事件通知给外部
     /// </summary>
     public sealed class DiContainer
     {
-        /// <summary>
-        /// 存储服务类型对应的工厂方法
-        /// Key：服务的 Type 类型
-        /// Value：接收 DiContainer 实例，返回服务实例的工厂方法
-        /// </summary>
-        private readonly Dictionary<Type , Func<DiContainer , object>> m_Factories = new( );
+        private readonly Dictionary<Type , Func<DiContainer , object>> m_Factories;
+        private readonly Dictionary<Type , object> m_Singletons;
 
         /// <summary>
-        /// 存储单例（Singleton）生命周期的服务实例
-        /// Key：服务的 Type 类型
-        /// Value：已创建的单例服务实例
+        /// 可选：服务创建/首次可用通知（由 ArchitectureCore 注入）
         /// </summary>
-        private readonly Dictionary<Type , object> m_Singletons = new( );
+        private readonly Action<Type , object> m_PostCreateHook;
 
         /// <summary>
-        /// 注册单例（Singleton）生命周期的服务实例
+        /// 避免同一 serviceType 重复通知（尤其是单例缓存/重复 Resolve）
         /// </summary>
-        /// <typeparam name="TService">服务接口/类型（泛型约束：引用类型）</typeparam>
-        /// <param name="instance">已创建的服务实例</param>
-        /// <exception cref="ArgumentNullException">当传入的实例为 null 时抛出</exception>
-        public void RegisterSingleton<TService>(TService instance) where TService : class
+        private readonly HashSet<Type> m_Notified;
+
+        /// <summary>
+        /// 创建Ioc容器
+        /// </summary>
+        /// <param name="hook">设置“服务已创建/首次解析完成”的回调</param>
+        public DiContainer(Action<Type , object> hook)
         {
-            var serviceType = typeof(TService);
-            // 单例实例不允许为 null，直接抛出参数空异常
-            m_Singletons[serviceType] = instance ?? throw new ArgumentNullException(nameof(instance));
+            m_Factories = new Dictionary<Type , Func<DiContainer , object>>( );
+            m_Singletons = new Dictionary<Type , object>( );
+            m_Notified = new HashSet<Type>( );
+            // 不主动遍历现有单例通知：因为可能尚未初始化 ArchitectureCore 或者顺序不确定
+            // 让 Resolve 或 RegisterSingleton(instance) 触发即可（更可控、更低成本）
+            m_PostCreateHook = hook;
         }
-
         /// <summary>
-        /// 注册单例（Singleton）生命周期的服务工厂方法
-        /// 特点：首次解析时执行工厂方法创建实例，后续直接返回缓存的单例实例
+        /// 创建通知
         /// </summary>
-        /// <typeparam name="TService">服务接口/类型（泛型约束：引用类型）</typeparam>
-        /// <param name="factory">创建服务实例的工厂方法（接收 DiContainer 实例，支持解析依赖）</param>
-        /// <exception cref="ArgumentNullException">当工厂方法为 null 时抛出</exception>
+        /// <param name="serviceType">服务类型</param>
+        /// <param name="instance">实例</param>
+        private void NotifyCreated(Type serviceType , object instance)
+        {
+            if(instance == null) return;
+            if(m_PostCreateHook == null) return;
+            if(m_Notified.Contains(serviceType)) return;
+
+            m_Notified.Add(serviceType);
+            m_PostCreateHook(serviceType , instance);
+        }
         public void RegisterSingleton<TService>(Func<DiContainer , TService> factory) where TService : class
         {
-            if(factory == null)
-            {
-                throw new ArgumentNullException(nameof(factory));
-            }
+            if(factory == null) throw new ArgumentNullException(nameof(factory));
 
             var serviceType = typeof(TService);
-            // 注册单例工厂方法：先检查缓存，无缓存则创建并缓存
             m_Factories[serviceType] = container =>
             {
-                // 优先从单例缓存中获取，避免重复创建
                 if(m_Singletons.TryGetValue(serviceType , out var cachedInstance))
                 {
+                    // 可能是先注册实例、后设置 hook 的场景：这里也做一次通知兜底
+                    NotifyCreated(serviceType , cachedInstance);
                     return cachedInstance;
                 }
 
-                // 执行工厂方法创建实例，并缓存到单例字典中
                 var createdInstance = factory(container);
-                m_Singletons[serviceType] = createdInstance;
+                m_Singletons[serviceType] = createdInstance ?? throw new InvalidOperationException($"Factory for '{serviceType.FullName}' returned null.");
+
+                // 创建完成即通知
+                NotifyCreated(serviceType , createdInstance);
                 return createdInstance;
             };
         }
 
-        /// <summary>
-        /// 注册瞬时（Transient）生命周期的服务工厂方法
-        /// 特点：每次解析时都会执行工厂方法创建新实例，无缓存
-        /// </summary>
-        /// <typeparam name="TService">服务接口/类型（泛型约束：引用类型）</typeparam>
-        /// <param name="factory">创建服务实例的工厂方法（接收 DiContainer 实例，支持解析依赖）</param>
-        /// <exception cref="ArgumentNullException">当工厂方法为 null 时抛出</exception>
         public void RegisterTransient<TService>(Func<DiContainer , TService> factory) where TService : class
         {
-            if(factory == null)
-            {
-                throw new ArgumentNullException(nameof(factory));
-            }
+            if(factory == null) throw new ArgumentNullException(nameof(factory));
 
-            // 注册瞬时工厂方法：每次解析都执行工厂方法，不缓存实例
-            m_Factories[typeof(TService)] = container => factory(container);
+            var serviceType = typeof(TService);
+            m_Factories[serviceType] = container =>
+            {
+                var createdInstance = factory(container) ?? throw new InvalidOperationException($"Factory for '{serviceType.FullName}' returned null.");
+
+                // Transient 每次都可能不同实例：
+                // 但生命周期管理一般只关心 System（通常是单例）。这里仍然通知一次（按 serviceType 维度去重）
+                NotifyCreated(serviceType , createdInstance);
+                return createdInstance;
+            };
         }
 
-        /// <summary>
-        /// 解析指定类型的服务实例
-        /// 解析逻辑优先级：单例缓存 > 工厂方法 > 抛出未注册异常
-        /// </summary>
-        /// <typeparam name="T">要解析的服务接口/类型（泛型约束：引用类型）</typeparam>
-        /// <returns>解析成功的服务实例</returns>
-        /// <exception cref="InvalidOperationException">当服务类型未注册时抛出</exception>
         public T Resolve<T>( ) where T : class
         {
             var serviceType = typeof(T);
 
-            // 第一步：检查单例缓存，存在则直接返回
             if(m_Singletons.TryGetValue(serviceType , out var cachedSingleton))
             {
+                // 兜底：先注册/先创建、后设置 hook 或后第一次 resolve 时，确保会通知一次
+                NotifyCreated(serviceType , cachedSingleton);
                 return (T)cachedSingleton;
             }
 
-            // 第二步：检查工厂方法，存在则执行工厂方法创建实例
             if(m_Factories.TryGetValue(serviceType , out var factoryMethod))
             {
-                return (T)factoryMethod(this);
+                var created = factoryMethod(this);
+                NotifyCreated(serviceType , created);
+                return (T)created;
             }
 
-            // 第三步：未注册该类型，抛出异常
-            throw new InvalidOperationException($"服务类型未注册：{serviceType.FullName}");
+            throw new InvalidOperationException($"Service type not registered：{serviceType.FullName}");
         }
     }
 }

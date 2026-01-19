@@ -8,7 +8,10 @@ namespace RuntimeLogic
     /// </summary>
     public sealed class GameInitialize:MonoBehaviour
     {
-        private GameTimeSystem _gameTimeSystem;
+        /// <summary>
+        /// 时间切片
+        /// </summary>
+        private TimeSlicing _gameTimeSlicing;
 
         /// <summary>
         /// 初始化加载静态密钥
@@ -22,26 +25,22 @@ namespace RuntimeLogic
         private void Awake( )
         {
             //初始化时间切片
-            _gameTimeSystem = new GameTimeSystem( );
+            _gameTimeSlicing = new TimeSlicing( );
 
+            //TODO:示例注册===>ArchitectureCore.BindSystemSingleton<interface>(c => new class:interface( ));
 
             DontDestroyOnLoad(this);
         }
 
         private void Update( )
         {
-            _gameTimeSystem.BeginFrame( );
-            ArchitectureCore.UpdateArchitecture(_gameTimeSystem.Frame.DeltaTime , _gameTimeSystem.Frame.UnscaledDeltaTime);
+            _gameTimeSlicing.BeginFrame( );
+            ArchitectureCore.UpdateArchitecture(_gameTimeSlicing.Frame.DeltaTime , _gameTimeSlicing.Frame.UnscaledDeltaTime);
         }
 
         private void FixedUpdate( )
         {
-            _gameTimeSystem.BeginFixedFrame( );
-        }
-
-        private void OnDestroy( )
-        {
-
+            _gameTimeSlicing.BeginFixedFrame( );
         }
 
         private void OnApplicationQuit( )

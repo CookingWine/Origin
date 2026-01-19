@@ -17,6 +17,7 @@ namespace OriginRuntime
 
             #region 控制协程Coroutine
 
+
             public static GameCoroutine StartCoroutine(string name , IEnumerator routine , MonoBehaviour bindBehaviour)
             {
                 if(bindBehaviour == null)
@@ -332,6 +333,9 @@ namespace OriginRuntime
             #endregion
         }
 
+        /// <summary>
+        /// 携程对象
+        /// </summary>
         public class GameCoroutine
         {
             public string Name;

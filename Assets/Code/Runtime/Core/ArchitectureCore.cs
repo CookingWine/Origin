@@ -5,20 +5,15 @@ namespace OriginRuntime
 {
     /// <summary>
     /// 架构核心：系统生命周期 + 更新调度
-    /// IoC 版本：系统实例由容器提供（显式注册），不再靠命名推断 + 反射创建
+    /// 系统实例来源：DiContainer（依赖注入）
+    /// 生命周期归属：ArchitectureCore（Init/Update/Shutdown + 排序）
     /// </summary>
     public static class ArchitectureCore
     {
         internal const int DESIGN_SYSTEM_COUNT = 32;
 
-        /// <summary>
-        /// IoC 容器（框架根容器）
-        /// </summary>
         private static DiContainer Container;
 
-        /// <summary>
-        /// 系统映射
-        /// </summary>
         private static readonly Dictionary<Type , ISystemCore> s_SystemMaps = new Dictionary<Type , ISystemCore>(DESIGN_SYSTEM_COUNT);
 
         private static readonly LinkedList<ISystemCore> s_Systems = new LinkedList<ISystemCore>( );
@@ -29,12 +24,23 @@ namespace OriginRuntime
 
         public static int SystemCount => s_SystemMaps.Count;
 
-        /// <summary>
-        /// 初始化架构（必须先调用）
-        /// </summary>
-        public static void InitializeArchitecture(DiContainer container)
+        static ArchitectureCore( )
         {
-            Container = container ?? throw new ArgumentNullException(nameof(container));
+            // 绑定 DI 容器 hook：任何服务一旦被“注册实例 / 首次创建 / 首次 resolve”，都会通知到这里
+            Container = new DiContainer(OnContainerServiceCreated);
+        }
+        private static void OnContainerServiceCreated(Type serviceType , object instance)
+        {
+            // ArchitectureCore 只关心：用“接口”注册的 ISystemCore
+            if(serviceType == null || instance == null) return;
+            if(!serviceType.IsInterface) return;
+
+            if(instance is not ISystemCore system) return;
+
+            // 已经注册过就跳过（避免重复 Init/重复入链表）
+            if(s_SystemMaps.ContainsKey(serviceType)) return;
+
+            RegisterSystemInternal(serviceType , system);
         }
 
         public static void UpdateArchitecture(float elapseSeconds , float realElapseSeconds)
@@ -46,10 +52,8 @@ namespace OriginRuntime
 
                 foreach(var system in s_UpdateModules)
                 {
-                    // 这里如果不是 IUpdateSystem，属于开发期错误，直接抛更好（避免把 null 塞进去）
                     if(system is not IUpdateSystem up)
                         throw new GameFrameworkException($"System '{system.GetType( ).FullName}' in update list but not IUpdateSystem.");
-
                     s_UpdateSystems.Add(up);
                 }
             }
@@ -60,6 +64,9 @@ namespace OriginRuntime
             }
         }
 
+        /// <summary>
+        /// 关闭并清理架构
+        /// </summary>
         public static void ShutdownArchitecture( )
         {
             for(LinkedListNode<ISystemCore> current = s_Systems.Last; current != null; current = current.Previous)
@@ -71,6 +78,8 @@ namespace OriginRuntime
             s_SystemMaps.Clear( );
             s_UpdateModules.Clear( );
             s_UpdateSystems.Clear( );
+
+            // Container 也清掉（不再接受 Resolve/注册的生命周期自动纳管）
             Container = null;
 
             Utility.Marshal.FreeCachedHGlobal( );
@@ -78,7 +87,7 @@ namespace OriginRuntime
 
         /// <summary>
         /// 获取系统（接口）
-        /// 系统由 IoC 容器创建/提供，不再做 “Ixxx -> xxx” 推断
+        /// 系统由 IoC 容器创建/提供，创建后会自动纳入生命周期（hook 或这里都会兜底）
         /// </summary>
         public static T GetSystem<T>( ) where T : class
         {
@@ -92,30 +101,41 @@ namespace OriginRuntime
             if(Container == null)
                 throw new GameFrameworkException("ArchitectureCore not initialized. Call InitializeArchitecture(container) first.");
 
-            // 由容器创建：依赖注入发生在这里
-            var created = Container.Resolve<T>( ) as ISystemCore ?? throw new GameFrameworkException($"Resolved '{interfaceType.FullName}', but it does not implement ISystemCore.");
+            // Resolve 时 hook 会自动 Register；这里再兜底一次（防止 hook 被覆盖/未设置）
+            var resolved = Container.Resolve<T>( );
+            if(resolved is not ISystemCore sys)
+                throw new GameFrameworkException($"Resolved '{interfaceType.FullName}', but it does not implement ISystemCore.");
 
-            // 统一走 Register：保证排序、更新列表、Init 都一致
-            RegisterSystemInternal(interfaceType , created);
-            return created as T;
+            if(!s_SystemMaps.ContainsKey(interfaceType))
+                RegisterSystemInternal(interfaceType , sys);
+
+            return resolved;
         }
 
         /// <summary>
-        /// 显式注册系统实例（手动 new 的系统也允许注册进来）
+        /// 通过 ArchitectureCore 绑定系统到容器（DI）+ 生命周期（Init/Update/Shutdown）
         /// </summary>
-        public static T RegisterSystem<T>(ISystemCore system) where T : class
+        public static void BindSystemSingleton<TSystem>(Func<DiContainer , TSystem> factory , bool instantiateNow = true) where TSystem : class
         {
-            Type interfaceType = typeof(T);
-            if(!interfaceType.IsInterface)
-                throw new GameFrameworkException($"System '{interfaceType.FullName}' is not interface.");
+            if(Container == null)
+                throw new GameFrameworkException("ArchitectureCore not initialized. Call InitializeArchitecture(container) first.");
 
-            RegisterSystemInternal(interfaceType , system);
-            return system as T;
+            Container.RegisterSingleton(factory);
+
+
+            if(instantiateNow)
+                GetSystem<TSystem>( );
         }
 
+        /// <summary>
+        /// 内部注册系统
+        /// </summary>
+        /// <param name="interfaceType">接口类型</param>
+        /// <param name="system">系统</param>
         private static void RegisterSystemInternal(Type interfaceType , ISystemCore system)
         {
-            s_SystemMaps[interfaceType] = system ?? throw new ArgumentNullException(nameof(system));
+            s_SystemMaps[interfaceType] = system;
+
             RegisterUpdateSystem(system);
             system.InitSystem( );
         }
