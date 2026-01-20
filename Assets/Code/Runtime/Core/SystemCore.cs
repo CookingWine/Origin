@@ -22,7 +22,7 @@ namespace OriginRuntime
         public void ShutdownSystem( );
     }
     /// <summary>
-    /// 系统轮询接口
+    /// 系统轮询接口【如果使用<seealso cref="IUpdateSystem"/>那就必须继承<seealso cref="ISystemCore"/>】
     /// </summary>
     public interface IUpdateSystem
     {

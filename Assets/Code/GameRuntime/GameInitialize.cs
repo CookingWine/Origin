@@ -8,6 +8,13 @@ namespace RuntimeLogic
     /// </summary>
     public sealed class GameInitialize:MonoBehaviour
     {
+        #region Regarding Resources.Load resource path related
+
+        private const string OBFUZ_STATIC_KEY = "Obfuz/defaultStaticSecretKey";
+        private const string ORIGIN_HELPER_SETTING = "Origin/HelperSetting";
+
+        #endregion
+
         /// <summary>
         /// 时间切片
         /// </summary>
@@ -20,19 +27,28 @@ namespace RuntimeLogic
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterAssembliesLoaded)]
         private static void InitializeLoadStaticKey( )
         {
-            EncryptionService<DefaultStaticEncryptionScope>.Encryptor = new Obfuz.EncryptionVM.GeneratedEncryptionVirtualMachine(Resources.Load<TextAsset>("Obfuz/defaultStaticSecretKey").bytes);
+            EncryptionService<DefaultStaticEncryptionScope>.Encryptor = new Obfuz.EncryptionVM.GeneratedEncryptionVirtualMachine(Resources.Load<TextAsset>(OBFUZ_STATIC_KEY).bytes);
         }
+
         private void Awake( )
         {
             //初始化时间切片
             _gameTimeSlicing = new TimeSlicing( );
             System.Diagnostics.Stopwatch stopwatch = new System.Diagnostics.Stopwatch( );
             stopwatch.Start( );
-            //TODO:示例注册===>ArchitectureCore.BindSystemSingleton<interface>(c => new class:interface( ));
+            //注入系统
             BindSystemArchitecture( );
+            //加载辅助器
+            BuildingAuxiliaryTools(Resources.Load<HelperSetting>(ORIGIN_HELPER_SETTING));
+
             stopwatch.Stop( );
             Debug.Log($"{stopwatch.ElapsedMilliseconds}ms");
             DontDestroyOnLoad(this);
+        }
+
+        private void Start( )
+        {
+            Debug.Log("Create ui root object");
         }
 
         private void Update( )
@@ -52,9 +68,21 @@ namespace RuntimeLogic
             ArchitectureCore.ShutdownArchitecture( );
         }
 
+        /// <summary>
+        /// 注入系统架构
+        /// </summary>
         private void BindSystemArchitecture( )
         {
             ArchitectureCore.BindSystemSingleton<IMonoBehaviourDriver>(mono => new MonoDriver( ));
+        }
+
+        /// <summary>
+        /// 构建辅助器
+        /// </summary>
+        /// <param name="helperSetting"></param>
+        private void BuildingAuxiliaryTools(HelperSetting helperSetting)
+        {
+            Debug.Log(helperSetting == null);
         }
     }
 }

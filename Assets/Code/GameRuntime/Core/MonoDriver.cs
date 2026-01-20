@@ -8,7 +8,7 @@ using UnityEngine.Internal;
 namespace RuntimeLogic
 {
     /// <summary>
-    /// 
+    /// 有关mono得驱动
     /// </summary>
     public sealed class MonoDriver:IMonoBehaviourDriver, ISystemCore
     {
