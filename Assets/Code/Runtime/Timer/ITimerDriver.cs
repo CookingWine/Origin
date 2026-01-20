@@ -41,6 +41,32 @@ namespace OriginRuntime
         /// <returns>是否运行中</returns>
         public bool Running(int timerId);
 
+        /// <summary>
+        /// 获得计时器剩余时间。
+        /// </summary>
+        public float GetLeftTime(int timerId);
+
+        /// <summary>
+        /// 重置计时器。
+        /// </summary>
+        public void ResetTimer(int timerId , TimerCallback callback , float time , bool isLoop = false , bool isUnscaled = false);
+
+        /// <summary>
+        /// 重置计时器。
+        /// </summary>
+        public void ResetTimer(int timerId , float time , bool isLoop , bool isUnscaled);
+
+        /// <summary>
+        /// 移除计时器。
+        /// </summary>
+        /// <param name="timerId">计时器Id。</param>
+        public void RemoveTimer(int timerId);
+
+        /// <summary>
+        /// 移除所有计时器。
+        /// </summary>
+        public void RemoveAllTimer( );
+
 
     }
 }

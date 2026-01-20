@@ -1,5 +1,7 @@
 using Obfuz;
 using OriginRuntime;
+using OriginRuntime.Resource;
+using RuntimeLogic.Resource;
 using UnityEngine;
 namespace RuntimeLogic
 {
@@ -54,7 +56,9 @@ namespace RuntimeLogic
         private void Update( )
         {
             _gameTimeSlicing.BeginFrame( );
-            ArchitectureCore.UpdateArchitecture(_gameTimeSlicing.Frame.DeltaTime , _gameTimeSlicing.Frame.UnscaledDeltaTime);
+            //缓存一次快照,防止两次拷贝
+            var frame = _gameTimeSlicing.Frame;
+            ArchitectureCore.UpdateArchitecture(frame.DeltaTime , frame.UnscaledDeltaTime);
         }
 
         private void FixedUpdate( )
@@ -74,6 +78,8 @@ namespace RuntimeLogic
         private void BindSystemArchitecture( )
         {
             ArchitectureCore.BindSystemSingleton<IMonoBehaviourDriver>(mono => new MonoDriver( ));
+            ArchitectureCore.BindSystemSingleton<ITimerDriver>(times => new TimerSystem( ));
+            ArchitectureCore.BindSystemSingleton<IResourceModule>(resource => new ResourceSystem( ));
         }
 
         /// <summary>
