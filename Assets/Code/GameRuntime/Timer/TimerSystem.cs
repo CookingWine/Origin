@@ -15,7 +15,7 @@ namespace RuntimeLogic
         }
         public void UpdateSystem(float elapseSeconds , float realElapseSeconds)
         {
-            UnityEngine.Debug.Log($"逻辑时间:{elapseSeconds}真实时间:{realElapseSeconds}");
+
         }
         public void ShutdownSystem( )
         {

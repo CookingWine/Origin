@@ -72,23 +72,6 @@ namespace OriginRuntime
                 return createdInstance;
             };
         }
-
-        public void RegisterTransient<TService>(Func<DiContainer , TService> factory) where TService : class
-        {
-            if(factory == null) throw new ArgumentNullException(nameof(factory));
-
-            var serviceType = typeof(TService);
-            m_Factories[serviceType] = container =>
-            {
-                var createdInstance = factory(container) ?? throw new InvalidOperationException($"Factory for '{serviceType.FullName}' returned null.");
-
-                // Transient 每次都可能不同实例：
-                // 但生命周期管理一般只关心 System（通常是单例）。这里仍然通知一次（按 serviceType 维度去重）
-                NotifyCreated(serviceType , createdInstance);
-                return createdInstance;
-            };
-        }
-
         public T Resolve<T>( ) where T : class
         {
             var serviceType = typeof(T);
