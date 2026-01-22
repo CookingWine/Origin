@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: RuntimeConfigSetting
   m_EditorClassIdentifier: 
   m_VersionHelper: 
-  m_LogHelper: 
+  m_LogHelper: RuntimeLogic.Logger
   m_CompressionHelper: 
   m_JsonHelper: 
   m_FrameRate: 60

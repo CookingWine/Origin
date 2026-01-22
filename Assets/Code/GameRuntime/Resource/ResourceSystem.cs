@@ -87,7 +87,7 @@ namespace RuntimeLogic.Resource
 
         public void InitSystem( )
         {
-
+            UnityEngine.Debug.Log("Start load resource config");
         }
 
         public void UpdateSystem(float elapseSeconds , float realElapseSeconds)

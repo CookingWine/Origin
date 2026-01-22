@@ -1,9 +1,9 @@
 using Obfuz;
-using OriginRuntime;
-using OriginRuntime.Resource;
-using RuntimeLogic.Resource;
 using System;
 using UnityEngine;
+using OriginRuntime;
+using RuntimeLogic.Resource;
+using OriginRuntime.Resource;
 namespace RuntimeLogic
 {
     /// <summary>
@@ -48,13 +48,13 @@ namespace RuntimeLogic
             BuildingAuxiliaryTools(_gameBaseConfigSetting);
 
             stopwatch.Stop( );
-            Debug.Log($"{stopwatch.ElapsedMilliseconds}ms");
+            Log.Info($"{stopwatch.ElapsedMilliseconds}ms");
             DontDestroyOnLoad(this);
         }
 
         private void Start( )
         {
-            Debug.Log("Create ui root object");
+            Log.Info("Create ui root object");
         }
 
         private void Update( )
