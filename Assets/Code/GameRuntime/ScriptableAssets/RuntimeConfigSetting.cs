@@ -3,10 +3,10 @@ using UnityEngine;
 namespace RuntimeLogic
 {
     /// <summary>
-    /// 辅助器设置
+    /// 运行时得必要配置
     /// </summary>
-    [CreateAssetMenu(menuName = "Origin/Helper Setting" , fileName = "HelperSetting")]
-    public class HelperSetting:ScriptableObject
+    [CreateAssetMenu(menuName = "Origin/Runtime Config" , fileName = "RuntimeConfigSetting")]
+    public class RuntimeConfigSetting:ScriptableObject
     {
         #region game helper
         [SerializeField] private string m_VersionHelper;

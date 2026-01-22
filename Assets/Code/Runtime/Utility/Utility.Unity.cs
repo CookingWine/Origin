@@ -334,7 +334,7 @@ namespace OriginRuntime
         }
 
         /// <summary>
-        /// 携程对象
+        /// 协程对象
         /// </summary>
         public class GameCoroutine
         {

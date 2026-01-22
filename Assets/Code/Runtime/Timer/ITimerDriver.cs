@@ -12,6 +12,17 @@ namespace OriginRuntime
     public interface ITimerDriver
     {
         /// <summary>
+        /// 添加一个基于服务器的计时器，在属性中的毫秒Interval数过后，该计时器在应用程序中引发Elapsed事件
+        /// </summary>
+        /// <param name="autoReset">设置一个布尔值，该值指示 Timer 是否应只引发一次 Elapsed 事件（(false) 或重复 (true)）。</param>
+        /// <param name="enabled">设置一个值，该值指示 Timer 是否应引发 Elapsed 事件。</param>
+        /// <param name="interval">设置引发 Elapsed 事件的间隔（以毫秒为单位）。</param>
+        /// <param name="callback">达到间隔时发生。</param>
+        /// <returns>基于服务器的计时器</returns>
+        /// <remarks>更多信息请参考<see href="https://learn.microsoft.com/zh-cn/dotnet/api/system.timers.timer?view=net-8.0"/></remarks>
+        System.Timers.Timer AddTimerSystem(bool autoReset , bool enabled , int interval , System.Action<object , System.Timers.ElapsedEventArgs> callback);
+
+        /// <summary>
         /// 添加一个计时器
         /// </summary>
         /// <param name="callback">计时器回调</param>

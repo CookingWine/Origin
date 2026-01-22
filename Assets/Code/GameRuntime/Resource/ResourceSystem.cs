@@ -8,7 +8,7 @@ namespace RuntimeLogic.Resource
     /// <summary>
     /// 资源模块
     /// </summary>
-    internal sealed class ResourceSystem:IResourceModule, ISystemCore
+    internal sealed class ResourceSystem:IResourceModule, ISystemCore, IUpdateSystem
     {
         public int Priority => 0;
 
@@ -77,7 +77,7 @@ namespace RuntimeLogic.Resource
 
         public void Initialize( )
         {
-            
+
         }
 
         public UniTask<InitializationOperation> InitializePackage(string customPackageName , bool needInitMainFest = false)
@@ -87,7 +87,12 @@ namespace RuntimeLogic.Resource
 
         public void InitSystem( )
         {
-            
+
+        }
+
+        public void UpdateSystem(float elapseSeconds , float realElapseSeconds)
+        {
+
         }
 
         public void OnLowMemory( )
@@ -107,7 +112,7 @@ namespace RuntimeLogic.Resource
 
         public void ShutdownSystem( )
         {
-            
+
         }
     }
 }

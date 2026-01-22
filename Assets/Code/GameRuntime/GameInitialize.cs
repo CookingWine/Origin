@@ -2,6 +2,7 @@ using Obfuz;
 using OriginRuntime;
 using OriginRuntime.Resource;
 using RuntimeLogic.Resource;
+using System;
 using UnityEngine;
 namespace RuntimeLogic
 {
@@ -13,7 +14,7 @@ namespace RuntimeLogic
         #region Regarding Resources.Load resource path related
 
         private const string OBFUZ_STATIC_KEY = "Obfuz/defaultStaticSecretKey";
-        private const string ORIGIN_HELPER_SETTING = "Origin/HelperSetting";
+        private const string ORIGIN_HELPER_SETTING = "Origin/RuntimeConfigSetting";
 
         #endregion
 
@@ -21,6 +22,8 @@ namespace RuntimeLogic
         /// 时间切片
         /// </summary>
         private TimeSlicing _gameTimeSlicing;
+
+        private RuntimeConfigSetting _gameBaseConfigSetting;
 
         /// <summary>
         /// 初始化加载静态密钥
@@ -40,8 +43,9 @@ namespace RuntimeLogic
             stopwatch.Start( );
             //注入系统
             BindSystemArchitecture( );
+            _gameBaseConfigSetting = Resources.Load<RuntimeConfigSetting>(ORIGIN_HELPER_SETTING);
             //加载辅助器
-            BuildingAuxiliaryTools(Resources.Load<HelperSetting>(ORIGIN_HELPER_SETTING));
+            BuildingAuxiliaryTools(_gameBaseConfigSetting);
 
             stopwatch.Stop( );
             Debug.Log($"{stopwatch.ElapsedMilliseconds}ms");
@@ -86,9 +90,44 @@ namespace RuntimeLogic
         /// 构建辅助器
         /// </summary>
         /// <param name="helperSetting"></param>
-        private void BuildingAuxiliaryTools(HelperSetting helperSetting)
+        private void BuildingAuxiliaryTools(RuntimeConfigSetting helperSetting)
         {
-            Debug.Log(helperSetting == null);
+            if(!string.IsNullOrEmpty(helperSetting.LogHelper))
+            {
+                GameFrameworkLog.SetLogHelper(CreateHelper<GameFrameworkLog.ILogHelper>(helperSetting.LogHelper));
+            }
+
+            if(!string.IsNullOrEmpty(helperSetting.JsonHelper))
+            {
+                Utility.Json.SetJsonHelper(CreateHelper<Utility.Json.IJsonHelper>(helperSetting.JsonHelper));
+            }
+            if(!string.IsNullOrEmpty(helperSetting.CompressionHelper))
+            {
+
+            }
+
+            if(!string.IsNullOrEmpty(helperSetting.VersionHelper))
+            {
+
+            }
+
+        }
+
+        /// <summary>
+        /// 创建辅助器
+        /// </summary>
+        /// <typeparam name="T">辅助器类型</typeparam>
+        /// <param name="helperName">辅助器全名</param>
+        /// <returns>辅助器</returns>
+        private T CreateHelper<T>(string helperName)
+        {
+            if(string.IsNullOrEmpty(helperName))
+                throw new GameFrameworkException("Helper name is empty");
+            Type helperType = Utility.Assembly.GetType(helperName) ?? throw new GameFrameworkException(Utility.Text.Format("Can not find helper type '{0}'" , helperName));
+            T helper = (T)Activator.CreateInstance(helperType);
+            return helper == null
+                ? throw new GameFrameworkException(Utility.Text.Format("Can not create helper instance '{0}'" , helperName))
+                : helper;
         }
     }
 }
