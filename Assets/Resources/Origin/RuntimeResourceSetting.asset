@@ -1,0 +1,24 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 394966ad1aa7f3f4abccf94504a6c68a, type: 3}
+  m_Name: RuntimeResourceSetting
+  m_EditorClassIdentifier: 
+  m_GamePlayMode: 0
+  m_EncryptionType: 2
+  m_UpdatableWhilePlaying: 0
+  m_DownloadingMaxNum: 0
+  m_ForceUnloadUnusedAssets: 1
+  m_PreorderUnloadUnusedAssets: 0
+  m_PerformGCCollect: 0
+  m_MinUnloadUnusedAssetsInterval: 30
+  m_MaxUnloadUnusedAssetsInterval: 60
+  m_UseSystemUnloadUnusedAssets: 1

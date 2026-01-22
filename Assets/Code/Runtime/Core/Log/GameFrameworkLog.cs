@@ -17,6 +17,15 @@ namespace OriginRuntime
         }
 
         /// <summary>
+        /// 获取log辅助器
+        /// </summary>
+        /// <returns></returns>
+        public static ILogHelper GetLogHelper( )
+        {
+            return s_LogHelper;
+        }
+
+        /// <summary>
         /// 打印调试级别日志，用于记录调试类日志信息。
         /// </summary>
         /// <param name="message">日志内容。</param>

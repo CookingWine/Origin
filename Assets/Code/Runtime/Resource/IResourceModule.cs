@@ -21,7 +21,7 @@ namespace OriginRuntime.Resource
         /// <summary>
         /// 当前最新的包裹版本。
         /// </summary>
-        string PackageVersion { set; }
+        string PackageVersion { get; }
 
         /// <summary>
         /// 获取运行模式
@@ -162,6 +162,11 @@ namespace OriginRuntime.Resource
         /// <param name="packageName">指定资源包的名称。不传使用默认资源包</param>
         /// <returns>资源信息。</returns>
         AssetInfo GetAssetInfo(string location , string packageName = "");
+
+        /// <summary>
+        /// 资源回收（卸载引用计数为零的资源）
+        /// </summary>
+        void UnloadUnusedAssets( );
 
         /// <summary>
         /// 低内存行为。
