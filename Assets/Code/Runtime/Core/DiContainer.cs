@@ -6,7 +6,6 @@ namespace OriginRuntime
     /// <summary>
     /// 轻量级 IoC（控制反转）容器实现
     /// 只做依赖注入：注册/解析/生命周期（Singleton/Transient）
-    /// 通过可选 Hook 把“服务创建/首次解析”事件通知给外部
     /// </summary>
     public sealed class DiContainer
     {
@@ -14,7 +13,7 @@ namespace OriginRuntime
         private readonly Dictionary<Type , object> m_Singletons;
 
         /// <summary>
-        /// 可选：服务创建/首次可用通知（由 ArchitectureCore 注入）
+        /// 服务创建/首次可用通知（由 ArchitectureCore 注入）
         /// </summary>
         private readonly Action<Type , object> m_PostCreateHook;
 

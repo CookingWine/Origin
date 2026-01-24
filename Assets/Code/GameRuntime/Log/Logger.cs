@@ -12,16 +12,16 @@ namespace RuntimeLogic
             switch(level)
             {
                 case GameFrameworkLogLevel.Debug:
-                    Debug.Log(Utility.Text.Format("<color=#00F5FF><App>--{0}</color>" , message.ToString( )));
+                    Debug.Log(Utility.Text.Format("<color=#00F5FF><{0}>--{1}</color>" , Application.productName , message.ToString( )));
                     break;
                 case GameFrameworkLogLevel.Info:
-                    Debug.Log(Utility.Text.Format("<color=#FFDAB9><App>--{0}</color>" , message.ToString( )));
+                    Debug.Log(Utility.Text.Format("<color=#FFDAB9><{0}>--{1}</color>" , Application.productName , message.ToString( )));
                     break;
                 case GameFrameworkLogLevel.Warning:
-                    Debug.LogWarning(Utility.Text.Format("<App>--{0}" , message.ToString( )));
+                    Debug.LogWarning(Utility.Text.Format("<{0}>--{1}" , Application.productName , message.ToString( )));
                     break;
                 case GameFrameworkLogLevel.Error:
-                    Debug.LogError(Utility.Text.Format("<App>--{0}" , message.ToString( )));
+                    Debug.LogError(Utility.Text.Format("<{0}>--{1}" , Application.productName , message.ToString( )));
                     break;
                 default:
                     throw new GameFrameworkException(message.ToString( ));

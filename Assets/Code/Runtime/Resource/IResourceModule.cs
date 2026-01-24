@@ -172,11 +172,5 @@ namespace OriginRuntime.Resource
         /// 低内存行为。
         /// </summary>
         void OnLowMemory( );
-
-        /// <summary>
-        /// 低内存回调保护。
-        /// </summary>
-        /// <param name="action">低内存行为。</param>
-        void SetForceUnloadUnusedAssetsAction(Action<bool> action);
     }
 }

@@ -14,8 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_GamePlayMode: 0
   m_EncryptionType: 2
-  m_UpdatableWhilePlaying: 0
-  m_DownloadingMaxNum: 0
+  m_UpdatableWhilePlaying: 1
+  m_DownloadingMaxNum: 10
   m_ForceUnloadUnusedAssets: 1
   m_PreorderUnloadUnusedAssets: 0
   m_PerformGCCollect: 0

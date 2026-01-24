@@ -153,26 +153,26 @@ namespace RuntimeLogic.Resource
 
         public AssetInfo GetAssetInfo(string location , string packageName = "")
         {
-            throw new NotImplementedException( );
+            return null;
         }
 
         public AssetInfo[] GetAssetInfos(string resTag , string packageName = "")
         {
-            throw new NotImplementedException( );
+            return null;
         }
 
         public AssetInfo[] GetAssetInfos(string[] tags , string packageName = "")
         {
-            throw new NotImplementedException( );
+
+
+            return null;
         }
 
         public HasAssetResult HasAsset(string location , string packageName = "")
         {
-            throw new NotImplementedException( );
-        }
-        public void SetForceUnloadUnusedAssetsAction(Action<bool> action)
-        {
 
+
+            return HasAssetResult.NotExist;
         }
 
         public void SetRemoteServicesUrl(string defaultHostServer , string fallbackHostServer)
