@@ -23,8 +23,6 @@ namespace RuntimeLogic
         /// </summary>
         private TimeSlicing _gameTimeSlicing;
 
-        private RuntimeConfigSetting _gameBaseConfigSetting;
-
         /// <summary>
         /// 初始化加载静态密钥
         /// </summary>
@@ -45,10 +43,8 @@ namespace RuntimeLogic
             stopwatch.Start( );
             //注入系统
             BindSystemArchitecture( );
-            _gameBaseConfigSetting = Resources.Load<RuntimeConfigSetting>(ORIGIN_HELPER_SETTING);
             //加载辅助器
-            BuildingAuxiliaryTools(_gameBaseConfigSetting);
-
+            BuildingAuxiliaryTools(Resources.Load<RuntimeConfigSetting>(ORIGIN_HELPER_SETTING));
             stopwatch.Stop( );
 
             CustomPlayerLoop.OnCustomUpdate += ( ) =>
@@ -70,11 +66,13 @@ namespace RuntimeLogic
             Log.Info($"{stopwatch.ElapsedMilliseconds}ms");
             DontDestroyOnLoad(this);
 
-            ArchitectureCore.GetSystem<ITimerDriver>( ).AddTimer((data) => { Log.Info("Timer"); } , 5 , true);
+            //ArchitectureCore.GetSystem<ITimerDriver>( ).AddTimer((data) => { Log.Info("Timer"); } , 5 , true);
         }
 
         private void Start( )
         {
+            ArchitectureCore.GetSystem<IResourceModule>( ).Initialize( );
+
             Log.Info("Create ui root object");
         }
 
@@ -104,6 +102,9 @@ namespace RuntimeLogic
         /// <param name="helperSetting"></param>
         private void BuildingAuxiliaryTools(RuntimeConfigSetting helperSetting)
         {
+            if(helperSetting == null)
+                throw new GameFrameworkException("RuntimeConfigSetting is null");
+
             if(!string.IsNullOrEmpty(helperSetting.LogHelper))
             {
                 GameFrameworkLog.SetLogHelper(CreateHelper<GameFrameworkLog.ILogHelper>(helperSetting.LogHelper));

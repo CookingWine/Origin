@@ -18,6 +18,9 @@ namespace RuntimeLogic
         [SerializeField] private float m_MinUnloadUnusedAssetsInterval = 30f;
         [SerializeField] private float m_MaxUnloadUnusedAssetsInterval = 60f;
         [SerializeField] private bool m_UseSystemUnloadUnusedAssets = true;
+        [SerializeField] private string m_HostServerURL;
+        [SerializeField] private string m_FallbackHostServerURL;
+        [SerializeField] private string m_DefaultPackageName;
 
         /// <summary>
         ///  获取运行模式
@@ -66,5 +69,20 @@ namespace RuntimeLogic
         /// 使用系统释放无用资源策略
         /// </summary>
         public bool UseSystemUnloadUnusedAssets => m_UseSystemUnloadUnusedAssets;
+
+        /// <summary>
+        /// 热更链接URL。
+        /// </summary>
+        public string HostServerURL => m_HostServerURL;
+
+        /// <summary>
+        /// 备用热更URL。
+        /// </summary>
+        public string FallbackHostServerURL => m_FallbackHostServerURL;
+
+        /// <summary>
+        /// 默认资源包名称。
+        /// </summary>
+        public string DefaultPackageName => m_DefaultPackageName;
     }
 }
