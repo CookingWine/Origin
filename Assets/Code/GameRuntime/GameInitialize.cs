@@ -33,6 +33,8 @@ namespace RuntimeLogic
         private static void InitializeLoadStaticKey( )
         {
             EncryptionService<DefaultStaticEncryptionScope>.Encryptor = new Obfuz.EncryptionVM.GeneratedEncryptionVirtualMachine(Resources.Load<TextAsset>(OBFUZ_STATIC_KEY).bytes);
+
+            CustomPlayerLoop.CreateCustomPlayerLoop( );
         }
 
         private void Awake( )
@@ -48,8 +50,27 @@ namespace RuntimeLogic
             BuildingAuxiliaryTools(_gameBaseConfigSetting);
 
             stopwatch.Stop( );
+
+            CustomPlayerLoop.OnCustomUpdate += ( ) =>
+            {
+                _gameTimeSlicing.BeginFrame( );
+                //缓存一次快照,防止两次拷贝
+                var frame = _gameTimeSlicing.Frame;
+                ArchitectureCore.UpdateArchitecture(frame.DeltaTime , frame.UnscaledDeltaTime);
+            };
+
+            CustomPlayerLoop.OnCustomLateUpdate += ( ) =>
+            {
+
+            };
+            CustomPlayerLoop.OnCustomFixedUpdate += ( ) =>
+            {
+                _gameTimeSlicing.BeginFixedFrame( );
+            };
             Log.Info($"{stopwatch.ElapsedMilliseconds}ms");
             DontDestroyOnLoad(this);
+
+            ArchitectureCore.GetSystem<ITimerDriver>( ).AddTimer((data) => { Log.Info("Timer"); } , 5 , true);
         }
 
         private void Start( )
@@ -57,23 +78,14 @@ namespace RuntimeLogic
             Log.Info("Create ui root object");
         }
 
-        private void Update( )
-        {
-            _gameTimeSlicing.BeginFrame( );
-            //缓存一次快照,防止两次拷贝
-            var frame = _gameTimeSlicing.Frame;
-            ArchitectureCore.UpdateArchitecture(frame.DeltaTime , frame.UnscaledDeltaTime);
-        }
-
-        private void FixedUpdate( )
-        {
-            _gameTimeSlicing.BeginFixedFrame( );
-        }
-
         private void OnApplicationQuit( )
         {
             StopAllCoroutines( );
             ArchitectureCore.ShutdownArchitecture( );
+            CustomPlayerLoop.OnCustomFixedUpdate = null;
+            CustomPlayerLoop.OnCustomLateUpdate = null;
+            CustomPlayerLoop.OnCustomUpdate = null;
+            CustomPlayerLoop.UnCustomPlayerLoop( );
         }
 
         /// <summary>

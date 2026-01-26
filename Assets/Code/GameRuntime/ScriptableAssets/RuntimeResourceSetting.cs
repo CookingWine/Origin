@@ -13,7 +13,6 @@ namespace RuntimeLogic
         [SerializeField] private EncryptionType m_EncryptionType;
         [SerializeField] private bool m_UpdatableWhilePlaying;
         [SerializeField] private int m_DownloadingMaxNum;
-        [SerializeField] private bool m_ForceUnloadUnusedAssets = true;
         [SerializeField] private bool m_PreorderUnloadUnusedAssets = false;
         [SerializeField] private bool m_PerformGCCollect = false;
         [SerializeField] private float m_MinUnloadUnusedAssetsInterval = 30f;
@@ -47,10 +46,6 @@ namespace RuntimeLogic
         /// 同时下载的最大数目。
         /// </summary>
         public int DownloadingMaxNum => m_DownloadingMaxNum;
-        /// <summary>
-        /// 强制卸载未使用的资源
-        /// </summary>
-        public bool ForceUnloadUnusedAssets => m_ForceUnloadUnusedAssets;
         /// <summary>
         /// 预卸载未使用的资产
         /// </summary>

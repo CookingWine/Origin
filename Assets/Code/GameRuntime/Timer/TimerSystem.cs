@@ -41,8 +41,11 @@ namespace RuntimeLogic
         private readonly List<Timer> m_UnscaledTimerList = new List<Timer>( );
         private readonly List<int> m_CacheRemoveTimers = new List<int>( );
         private readonly List<int> m_CacheRemoveUnscaledTimers = new List<int>( );
-
         private readonly List<System.Timers.Timer> m_Ticker = new List<System.Timers.Timer>( );
+        /// <summary>
+        ///  安全阈值：一帧最多补跑多少轮“坏帧循环”防止逻辑错误把一帧拖成永恒
+        /// </summary>
+        private const int MAX_CATCHUP_LOOPS_PER_FRAME = 64;
         public void InitSystem( )
         {
             m_CurrentTimerID = 0;
@@ -77,6 +80,7 @@ namespace RuntimeLogic
             {
                 TimerId = ++m_CurrentTimerID ,
                 CurrentTimer = delay ,
+                Time = delay ,
                 Callback = callback ,
                 IsLoop = isLoop ,
                 IsUnscaled = isUnscaled ,
@@ -306,43 +310,73 @@ namespace RuntimeLogic
 
         private void LoopCallInBadFrame( )
         {
-            bool isLoopCall = false;
-            for(int i = 0, len = m_TimeList.Count; i < len; i++)
+            int loops = 0;
+
+            while(loops++ < MAX_CATCHUP_LOOPS_PER_FRAME)
             {
-                Timer timer = m_TimeList[i];
-                if(timer.IsLoop && timer.CurrentTimer <= 0)
+                bool hasPending = false;
+
+                for(int i = 0, len = m_TimeList.Count; i < len; i++)
                 {
-                    timer.Callback?.Invoke(timer.Args);
-                    timer.CurrentTimer += timer.Time;
-                    if(timer.CurrentTimer <= 0)
+                    Timer timer = m_TimeList[i];
+                    if(!timer.IsRunning || timer.IsNeedRemove) continue;
+
+                    if(timer.IsLoop && timer.CurrentTimer <= 0)
                     {
-                        isLoopCall = true;
+                        if(timer.Time <= 0f)
+                        {
+                            Log.Error($"[TimerSystem] Catchup scaled: invalid loop period(Time <= 0). TimerId={timer.TimerId}. Removed.");
+                            timer.IsNeedRemove = true;
+                            continue;
+                        }
+
+                        timer.Callback?.Invoke(timer.Args);
+                        timer.CurrentTimer += timer.Time;
+
+                        if(timer.CurrentTimer <= 0)
+                            hasPending = true;
                     }
                 }
+
+                if(!hasPending)
+                    break;
             }
-            if(isLoopCall)
-                LoopCallInBadFrame( );
         }
+
 
         private void LoopCallUnscaledInBadFrame( )
         {
-            bool isLoopCall = false;
-            for(int i = 0, len = m_UnscaledTimerList.Count; i < len; i++)
-            {
-                Timer timer = m_UnscaledTimerList[i];
-                if(timer.IsLoop && timer.CurrentTimer <= 0)
-                {
-                    timer.Callback?.Invoke(timer.Args);
+            int loops = 0;
 
-                    timer.CurrentTimer += timer.Time;
-                    if(timer.CurrentTimer <= 0)
+            while(loops++ < MAX_CATCHUP_LOOPS_PER_FRAME)
+            {
+                bool hasPending = false;
+
+                for(int i = 0, len = m_UnscaledTimerList.Count; i < len; i++)
+                {
+                    Timer timer = m_UnscaledTimerList[i];
+                    if(!timer.IsRunning || timer.IsNeedRemove) continue;
+
+                    if(timer.IsLoop && timer.CurrentTimer <= 0)
                     {
-                        isLoopCall = true;
+                        if(timer.Time <= 0f)
+                        {
+                            Log.Error($"[TimerSystem] Catchup unscaled: invalid loop period(Time <= 0). TimerId={timer.TimerId}. Removed.");
+                            timer.IsNeedRemove = true;
+                            continue;
+                        }
+
+                        timer.Callback?.Invoke(timer.Args);
+                        timer.CurrentTimer += timer.Time;
+
+                        if(timer.CurrentTimer <= 0)
+                            hasPending = true;
                     }
                 }
+
+                if(!hasPending)
+                    break;
             }
-            if(isLoopCall)
-                LoopCallUnscaledInBadFrame( );
         }
 
         /// <summary>

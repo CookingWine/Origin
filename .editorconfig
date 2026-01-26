@@ -12,3 +12,5 @@ end_of_line = crlf
 
 # 文件结尾添加换行符，以防警告
 insert_final_newline = true
+
+dotnet_diagnostic.IDE0130.severity = none

@@ -16,7 +16,7 @@ MonoBehaviour:
   m_EncryptionType: 2
   m_UpdatableWhilePlaying: 1
   m_DownloadingMaxNum: 10
-  m_ForceUnloadUnusedAssets: 1
+  m_ForceUnloadUnusedAssets: 0
   m_PreorderUnloadUnusedAssets: 0
   m_PerformGCCollect: 0
   m_MinUnloadUnusedAssetsInterval: 30

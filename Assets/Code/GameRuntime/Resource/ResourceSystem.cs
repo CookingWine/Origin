@@ -59,7 +59,7 @@ namespace RuntimeLogic.Resource
         /// <summary>
         /// 强制卸载未使用的资源
         /// </summary>
-        private bool m_ForceUnloadUnusedAssets;
+        private bool m_ForceUnloadUnusedAssets = false;
         /// <summary>
         /// 预卸载未使用的资产
         /// </summary>
@@ -107,7 +107,6 @@ namespace RuntimeLogic.Resource
             EncryptionType = resourceSetting.EncryptionType;
             UpdatableWhilePlaying = resourceSetting.UpdatableWhilePlaying;
             DownloadingMaxNum = resourceSetting.DownloadingMaxNum;
-            m_ForceUnloadUnusedAssets = resourceSetting.ForceUnloadUnusedAssets;
             m_PreorderUnloadUnusedAssets = resourceSetting.PreorderUnloadUnusedAssets;
             m_PerformGCCollect = resourceSetting.PerformGCCollect;
             m_LastUnloadUnusedAssetsOperationElapseSeconds = 0f;
