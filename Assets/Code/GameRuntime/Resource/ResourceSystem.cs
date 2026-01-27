@@ -112,8 +112,7 @@ namespace RuntimeLogic.Resource
 
         public void InitSystem( )
         {
-            Debug.Log("Start load resource config");
-            var resourceSetting = Resources.Load<RuntimeResourceSetting>("Origin/RuntimeResourceSetting");
+            RuntimeResourceSetting resourceSetting = Resources.Load<RuntimeResourceSetting>("Origin/RuntimeResourceSetting");
             GamePlayMode = resourceSetting.GamePlayMode;
             EncryptionType = resourceSetting.EncryptionType;
             DefaultPackageName = resourceSetting.DefaultPackageName;
@@ -128,6 +127,7 @@ namespace RuntimeLogic.Resource
             HostServerURL = resourceSetting.HostServerURL;
             FallbackHostServerURL = resourceSetting.FallbackHostServerURL;
         }
+
         public void Initialize( )
         {
             //初始化资源系统
@@ -160,6 +160,8 @@ namespace RuntimeLogic.Resource
             package ??= YooAssets.GetPackage(customPackageName);
             m_ResourcePackageMaps[customPackageName] = package;
             InitializationOperation initializationOperation = null;
+
+            //编辑器模式下运行
             if(GamePlayMode == EPlayMode.EditorSimulateMode)
             {
                 PackageInvokeBuildResult buildResul = EditorSimulateModeHelper.SimulateBuild(customPackageName);
@@ -171,12 +173,72 @@ namespace RuntimeLogic.Resource
                 initializationOperation = package.InitializeAsync(createParameters);
             }
 
+            //创建解密服务
+            IDecryptionServices decryptionServices = CreateDecryptionServices( );
+
+            //单机模式下运行
+            if(GamePlayMode == EPlayMode.OfflinePlayMode)
+            {
+                var createParameters = new OfflinePlayModeParameters( )
+                {
+                    BuildinFileSystemParameters = FileSystemParameters.CreateDefaultBuildinFileSystemParameters(decryptionServices) ,
+                    AutoUnloadBundleWhenUnused = AutoUnloadBundleWhenUnused
+                };
+                initializationOperation = package.InitializeAsync(createParameters);
+            }
+
+            //联网模式下运行
+            if(GamePlayMode == EPlayMode.HostPlayMode)
+            {
+                IRemoteServices remoteServices = new RemoteServices(HostServerURL , FallbackHostServerURL);
+                HostPlayModeParameters createParameters = new HostPlayModeParameters( )
+                {
+                    BuildinFileSystemParameters = FileSystemParameters.CreateDefaultBuildinFileSystemParameters(decryptionServices) ,
+                    CacheFileSystemParameters = FileSystemParameters.CreateDefaultCacheFileSystemParameters(remoteServices , decryptionServices) ,
+                    AutoUnloadBundleWhenUnused = AutoUnloadBundleWhenUnused
+                };
+                initializationOperation = package.InitializeAsync(createParameters);
+            }
+
+            //Web模式下运行
+            if(GamePlayMode == EPlayMode.WebPlayMode)
+            {
+                var createParameters = new WebPlayModeParameters( );
+                IWebDecryptionServices webDecryptionServices = CreateWebDecryptionServices( );
+                IRemoteServices remoteServices = new RemoteServices(HostServerURL , FallbackHostServerURL);
+                if(LoadResWayWebGL == ELoadResWayWebGL.Remote)
+                {
+                    createParameters.WebRemoteFileSystemParameters = FileSystemParameters.CreateDefaultWebRemoteFileSystemParameters(remoteServices , webDecryptionServices);
+                }
+                createParameters.WebServerFileSystemParameters = FileSystemParameters.CreateDefaultWebServerFileSystemParameters(webDecryptionServices);
+                createParameters.AutoUnloadBundleWhenUnused = AutoUnloadBundleWhenUnused;
+                initializationOperation = package.InitializeAsync(createParameters);
+            }
+
+            if(initializationOperation == null)
+                throw new GameFrameworkException("Initialization Operation is null");
+
             await initializationOperation.ToUniTask( );
 
             if(needInitMainFest)
             {
-
+                var requestPackageVersionOperation = package.RequestPackageVersionAsync( );
+                await requestPackageVersionOperation.ToUniTask( );
+                if(requestPackageVersionOperation.Status == EOperationStatus.Succeed)
+                {
+                    var updatePackageManifestAsync = package.UpdatePackageManifestAsync(requestPackageVersionOperation.PackageVersion);
+                    await updatePackageManifestAsync.ToUniTask( );
+                    if(updatePackageManifestAsync.Status == EOperationStatus.Failed)
+                    {
+                        Log.Fatal(Utility.Text.Format("Update package manifest failed:{0}" , updatePackageManifestAsync.Status));
+                    }
+                }
+                else
+                {
+                    Log.Fatal(Utility.Text.Format("Get package version failed. PackageName:{0} status:{1}" , customPackageName , requestPackageVersionOperation.Status));
+                }
             }
+
             return initializationOperation;
         }
 
@@ -294,12 +356,10 @@ namespace RuntimeLogic.Resource
             m_PerformGCCollect = true;
         }
 
-
         public void ShutdownSystem( )
         {
 
         }
-
 
         #region private
 
@@ -315,6 +375,34 @@ namespace RuntimeLogic.Resource
                 YooAssets.IsNeedDownloadFromRemote(assetInfo) :
                 YooAssets.GetPackage(packageName).IsNeedDownloadFromRemote(assetInfo);
         }
+
+        /// <summary>
+        /// 创建解密服务。
+        /// </summary>
+        private IDecryptionServices CreateDecryptionServices( )
+        {
+            return EncryptionType switch
+            {
+                EncryptionType.FileOffSet => new FileOffsetDecryption( ),
+                EncryptionType.FileStream => new FileStreamDecryption( ),
+                _ => null
+            };
+        }
+
+        /// <summary>
+        /// 创建web解密服务。
+        /// </summary>
+        /// <returns></returns>
+        private IWebDecryptionServices CreateWebDecryptionServices( )
+        {
+            return EncryptionType switch
+            {
+                EncryptionType.FileOffSet => new FileOffsetWebDecryption( ),
+                EncryptionType.FileStream => new FileStreamWebDecryption( ),
+                _ => null
+            };
+        }
+
         #endregion
     }
 }

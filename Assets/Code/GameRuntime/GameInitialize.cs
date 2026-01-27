@@ -116,12 +116,12 @@ namespace RuntimeLogic
             }
             if(!string.IsNullOrEmpty(helperSetting.CompressionHelper))
             {
-
+                Utility.Compression.SetCompressionHelper(CreateHelper<Utility.Compression.ICompressionHelper>(helperSetting.CompressionHelper));
             }
 
             if(!string.IsNullOrEmpty(helperSetting.VersionHelper))
             {
-
+                OriginRuntime.Version.SetVersionHelper(CreateHelper<OriginRuntime.Version.IVersionHelper>(helperSetting.VersionHelper));
             }
 
         }

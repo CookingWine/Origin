@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 394966ad1aa7f3f4abccf94504a6c68a, type: 3}
   m_Name: RuntimeResourceSetting
   m_EditorClassIdentifier: 
-  m_GamePlayMode: 0
+  m_GamePlayMode: 1
   m_EncryptionType: 2
   m_UpdatableWhilePlaying: 0
   m_DownloadingMaxNum: 10

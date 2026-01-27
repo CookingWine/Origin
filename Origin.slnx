@@ -1,6 +1,6 @@
 ﻿<Solution>
   <Project Path="DG.Tweening.csproj" />
-  <Project Path="OriginRuntime.csproj" />
   <Project Path="RuntimeLogic.csproj" />
+  <Project Path="OriginRuntime.csproj" />
   <Project Path="DG.DOTweenEditor.csproj" />
 </Solution>
