@@ -15,6 +15,7 @@ namespace RuntimeLogic
 
         private const string OBFUZ_STATIC_KEY = "Obfuz/defaultStaticSecretKey";
         private const string ORIGIN_HELPER_SETTING = "Origin/RuntimeConfigSetting";
+        private const string ORIGIN_UI_ROOT_PATH = "Origin/OriginUI";
 
         #endregion
 
@@ -72,8 +73,9 @@ namespace RuntimeLogic
         private void Start( )
         {
             ArchitectureCore.GetSystem<IResourceModule>( ).Initialize( );
-
-            Log.Info("Create ui root object");
+            GameObject uiRoot = Instantiate(Resources.Load<GameObject>(ORIGIN_UI_ROOT_PATH));
+            uiRoot.name = "OriginUIRoot";
+            uiRoot.transform.SetParent(this.transform , false);
         }
 
         private void OnApplicationQuit( )

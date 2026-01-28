@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_VersionHelper: 
   m_LogHelper: RuntimeLogic.Logger
-  m_CompressionHelper: 
-  m_JsonHelper: 
+  m_CompressionHelper: RuntimeLogic.CompressionHelper
+  m_JsonHelper: RuntimeLogic.JsonHelper
   m_FrameRate: 60
   m_GameSpeed: 1

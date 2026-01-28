@@ -126,6 +126,7 @@ namespace RuntimeLogic.Resource
             m_UseSystemUnloadUnusedAssets = resourceSetting.UseSystemUnloadUnusedAssets;
             HostServerURL = resourceSetting.HostServerURL;
             FallbackHostServerURL = resourceSetting.FallbackHostServerURL;
+            Milliseconds = resourceSetting.Milliseconds;
         }
 
         public void Initialize( )
@@ -134,9 +135,11 @@ namespace RuntimeLogic.Resource
             YooAssets.Initialize((YooAsset.ILogger)GameFrameworkLog.GetLogHelper( ));
             YooAssets.SetOperationSystemMaxTimeSlice(Milliseconds);
             ResourcePackage defaultPackage = YooAssets.TryGetPackage(DefaultPackageName);
-            defaultPackage ??= YooAssets.GetPackage(DefaultPackageName);
-            YooAssets.SetDefaultPackage(defaultPackage);
-
+            if(defaultPackage == null)
+            {
+                defaultPackage = YooAssets.CreatePackage(DefaultPackageName);
+                YooAssets.SetDefaultPackage(defaultPackage);
+            }
         }
 
         public async UniTask<InitializationOperation> InitializePackage(string customPackageName , bool needInitMainFest = false)

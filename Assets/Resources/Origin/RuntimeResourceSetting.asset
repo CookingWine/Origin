@@ -24,3 +24,4 @@ MonoBehaviour:
   m_HostServerURL: 
   m_FallbackHostServerURL: 
   m_DefaultPackageName: DefaultPackage
+  m_Milliseconds: 60

@@ -17,6 +17,7 @@ namespace RuntimeLogic
         [SerializeField] private bool m_PerformGCCollect = false;
         [SerializeField] private float m_MinUnloadUnusedAssetsInterval = 30f;
         [SerializeField] private float m_MaxUnloadUnusedAssetsInterval = 60f;
+        [SerializeField] private long m_Milliseconds;
         [SerializeField] private bool m_UseSystemUnloadUnusedAssets = true;
         [SerializeField] private string m_HostServerURL;
         [SerializeField] private string m_FallbackHostServerURL;
@@ -84,5 +85,10 @@ namespace RuntimeLogic
         /// 默认资源包名称。
         /// </summary>
         public string DefaultPackageName => m_DefaultPackageName;
+
+        /// <summary>
+        /// 获取或设置异步系统参数，每帧执行消耗的最大时间切片（单位：毫秒）
+        /// </summary>
+        public long Milliseconds => m_Milliseconds;
     }
 }
