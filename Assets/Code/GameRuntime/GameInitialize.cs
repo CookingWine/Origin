@@ -46,36 +46,22 @@ namespace RuntimeLogic
             BindSystemArchitecture( );
             //加载辅助器
             BuildingAuxiliaryTools(Resources.Load<RuntimeConfigSetting>(ORIGIN_HELPER_SETTING));
+
+            //构建循环周期
+            BuildingCyclePeriod( );
+
             stopwatch.Stop( );
-
-            CustomPlayerLoop.OnCustomUpdate += ( ) =>
-            {
-                _gameTimeSlicing.BeginFrame( );
-                //缓存一次快照,防止两次拷贝
-                var frame = _gameTimeSlicing.Frame;
-                ArchitectureCore.UpdateArchitecture(frame.DeltaTime , frame.UnscaledDeltaTime);
-            };
-
-            CustomPlayerLoop.OnCustomLateUpdate += ( ) =>
-            {
-
-            };
-            CustomPlayerLoop.OnCustomFixedUpdate += ( ) =>
-            {
-                _gameTimeSlicing.BeginFixedFrame( );
-            };
             Log.Info($"{stopwatch.ElapsedMilliseconds}ms");
             DontDestroyOnLoad(this);
-
-            //ArchitectureCore.GetSystem<ITimerDriver>( ).AddTimer((data) => { Log.Info("Timer"); } , 5 , true);
         }
 
         private void Start( )
         {
+            //初始化资源
             ArchitectureCore.GetSystem<IResourceModule>( ).Initialize( );
-            GameObject uiRoot = Instantiate(Resources.Load<GameObject>(ORIGIN_UI_ROOT_PATH));
-            uiRoot.name = "OriginUIRoot";
-            uiRoot.transform.SetParent(this.transform , false);
+
+            //构建加载UI根节点数据
+            BuildingUIRootData( );
         }
 
         private void OnApplicationQuit( )
@@ -126,6 +112,39 @@ namespace RuntimeLogic
                 OriginRuntime.Version.SetVersionHelper(CreateHelper<OriginRuntime.Version.IVersionHelper>(helperSetting.VersionHelper));
             }
 
+        }
+
+        /// <summary>
+        /// 构建循环周期
+        /// </summary>
+        private void BuildingCyclePeriod( )
+        {
+            CustomPlayerLoop.OnCustomUpdate += ( ) =>
+            {
+                _gameTimeSlicing.BeginFrame( );
+                //缓存一次快照,防止两次拷贝
+                var frame = _gameTimeSlicing.Frame;
+                ArchitectureCore.UpdateArchitecture(frame.DeltaTime , frame.UnscaledDeltaTime);
+            };
+
+            CustomPlayerLoop.OnCustomLateUpdate += ( ) =>
+            {
+
+            };
+            CustomPlayerLoop.OnCustomFixedUpdate += ( ) =>
+            {
+                _gameTimeSlicing.BeginFixedFrame( );
+            };
+        }
+
+        /// <summary>
+        /// 构建UI界面数据
+        /// </summary>
+        private void BuildingUIRootData( )
+        {
+            GameObject uiRoot = Instantiate(Resources.Load<GameObject>(ORIGIN_UI_ROOT_PATH));
+            uiRoot.name = "OriginUIRoot";
+            uiRoot.transform.SetParent(this.transform , false);
         }
 
         /// <summary>
