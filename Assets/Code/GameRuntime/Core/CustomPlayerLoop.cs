@@ -63,7 +63,7 @@ namespace RuntimeLogic
         /// <summary>
         /// 卸载自定义循环
         /// </summary>
-        public static void UnCustomPlayerLoop( )
+        public static void UnCustomPlayerLoop(bool releaseEvent = true)
         {
             PlayerLoopSystem loop = PlayerLoop.GetCurrentPlayerLoop( );
 
@@ -72,6 +72,12 @@ namespace RuntimeLogic
             loop = RemoveSystemFromSubSystem(loop , typeof(FixedUpdate) , typeof(FixedUpdateMarker));
 
             PlayerLoop.SetPlayerLoop(loop);
+            if(releaseEvent)
+            {
+                OnCustomUpdate = null;
+                OnCustomLateUpdate = null;
+                OnCustomFixedUpdate = null;
+            }
         }
 
         private static PlayerLoopSystem CreateCustomSystem(Type type , PlayerLoopSystem.UpdateFunction function)

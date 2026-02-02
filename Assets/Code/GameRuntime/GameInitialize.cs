@@ -40,8 +40,6 @@ namespace RuntimeLogic
         {
             //初始化时间切片
             _gameTimeSlicing = new TimeSlicing( );
-            System.Diagnostics.Stopwatch stopwatch = new System.Diagnostics.Stopwatch( );
-            stopwatch.Start( );
             //注入系统
             BindSystemArchitecture( );
             var runtimeConfig = Resources.Load<RuntimeConfigSetting>(ORIGIN_HELPER_SETTING);
@@ -52,9 +50,6 @@ namespace RuntimeLogic
 
             //构建循环周期
             BuildingCyclePeriod( );
-
-            stopwatch.Stop( );
-            Log.Info($"{stopwatch.ElapsedMilliseconds}ms");
             DontDestroyOnLoad(this);
         }
 
@@ -72,9 +67,6 @@ namespace RuntimeLogic
         {
             StopAllCoroutines( );
             ArchitectureCore.ShutdownArchitecture( );
-            CustomPlayerLoop.OnCustomFixedUpdate = null;
-            CustomPlayerLoop.OnCustomLateUpdate = null;
-            CustomPlayerLoop.OnCustomUpdate = null;
             CustomPlayerLoop.UnCustomPlayerLoop( );
         }
 
