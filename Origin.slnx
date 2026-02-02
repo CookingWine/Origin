@@ -1,5 +1,7 @@
 ﻿<Solution>
   <Project Path="DG.Tweening.csproj" />
+  <Project Path="AVProVideo.Editor.csproj" />
+  <Project Path="AVProVideo.Runtime.csproj" />
   <Project Path="RuntimeLogic.csproj" />
   <Project Path="OriginRuntime.csproj" />
   <Project Path="DG.DOTweenEditor.csproj" />
