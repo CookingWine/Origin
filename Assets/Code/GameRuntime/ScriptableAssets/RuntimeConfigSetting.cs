@@ -13,6 +13,8 @@ namespace RuntimeLogic
         [SerializeField] private string m_LogHelper;
         [SerializeField] private string m_CompressionHelper;
         [SerializeField] private string m_JsonHelper;
+        [SerializeField]
+        private ReferenceStrictCheckType m_EnableStrictCheck = ReferenceStrictCheckType.AlwaysEnable;
 
         /// <summary>
         /// 版本辅助器
@@ -56,6 +58,41 @@ namespace RuntimeLogic
             }
         }
 
+        /// <summary>
+        /// 获取是否开启强制检查。
+        /// </summary>
+        public ReferenceStrictCheckType EnableReferenceStrictCheck => m_EnableStrictCheck;
 
+
+
+        #region enum
+
+        /// <summary>
+        /// 引用强制检查类型。
+        /// </summary>
+        public enum ReferenceStrictCheckType:byte
+        {
+            /// <summary>
+            /// 总是启用。
+            /// </summary>
+            AlwaysEnable = 0,
+
+            /// <summary>
+            /// 仅在开发模式时启用。
+            /// </summary>
+            OnlyEnableWhenDevelopment,
+
+            /// <summary>
+            /// 仅在编辑器中启用。
+            /// </summary>
+            OnlyEnableInEditor,
+
+            /// <summary>
+            /// 总是禁用。
+            /// </summary>
+            AlwaysDisable,
+        }
+
+        #endregion
     }
 }

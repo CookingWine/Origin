@@ -44,8 +44,11 @@ namespace RuntimeLogic
             stopwatch.Start( );
             //注入系统
             BindSystemArchitecture( );
+            var runtimeConfig = Resources.Load<RuntimeConfigSetting>(ORIGIN_HELPER_SETTING);
             //加载辅助器
-            BuildingAuxiliaryTools(Resources.Load<RuntimeConfigSetting>(ORIGIN_HELPER_SETTING));
+            BuildingAuxiliaryTools(runtimeConfig);
+            //设置引用池检查模式
+            BuildingReferencePoolSetting(runtimeConfig);
 
             //构建循环周期
             BuildingCyclePeriod( );
@@ -62,6 +65,7 @@ namespace RuntimeLogic
 
             //构建加载UI根节点数据
             BuildingUIRootData( );
+
         }
 
         private void OnApplicationQuit( )
@@ -90,8 +94,7 @@ namespace RuntimeLogic
         /// <param name="helperSetting"></param>
         private void BuildingAuxiliaryTools(RuntimeConfigSetting helperSetting)
         {
-            if(helperSetting == null)
-                throw new GameFrameworkException("RuntimeConfigSetting is null");
+            CheckRunningConfiguration(helperSetting);
 
             if(!string.IsNullOrEmpty(helperSetting.LogHelper))
             {
@@ -148,6 +151,28 @@ namespace RuntimeLogic
         }
 
         /// <summary>
+        /// 构建引用池设置
+        /// </summary>
+        /// <param name="runtimeConfig"></param>
+        private void BuildingReferencePoolSetting(RuntimeConfigSetting runtimeConfig)
+        {
+            CheckRunningConfiguration(runtimeConfig);
+
+            //设置引用是否开启强制检查
+            ReferencePool.EnableStrictCheck = runtimeConfig.EnableReferenceStrictCheck switch
+            {
+                RuntimeConfigSetting.ReferenceStrictCheckType.AlwaysEnable => true,
+                RuntimeConfigSetting.ReferenceStrictCheckType.OnlyEnableWhenDevelopment => Debug.isDebugBuild,
+                RuntimeConfigSetting.ReferenceStrictCheckType.OnlyEnableInEditor => Application.isEditor,
+                _ => false,
+            };
+            if(ReferencePool.EnableStrictCheck)
+            {
+                Log.Info("Strict checking is enabled for the Reference Pool. It will drastically affect the performance.");
+            }
+        }
+
+        /// <summary>
         /// 创建辅助器
         /// </summary>
         /// <typeparam name="T">辅助器类型</typeparam>
@@ -162,6 +187,12 @@ namespace RuntimeLogic
             return helper == null
                 ? throw new GameFrameworkException(Utility.Text.Format("Can not create helper instance '{0}'" , helperName))
                 : helper;
+        }
+
+        private void CheckRunningConfiguration(RuntimeConfigSetting configSetting)
+        {
+            if(configSetting == null)
+                throw new GameFrameworkException("RuntimeConfigSetting is null");
         }
     }
 }
