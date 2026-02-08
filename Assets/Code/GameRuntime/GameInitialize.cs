@@ -44,6 +44,7 @@ namespace RuntimeLogic
             _gameTimeSlicing = new TimeSlicing( );
             //注入系统
             BindSystemArchitecture( );
+            //加载基础配置
             var runtimeConfig = Resources.Load<RuntimeConfigSetting>(ORIGIN_HELPER_SETTING);
             //加载辅助器
             BuildingAuxiliaryTools(runtimeConfig);
@@ -54,7 +55,6 @@ namespace RuntimeLogic
             BuildingCyclePeriod( );
             Application.lowMemory += OnLowMemory;
             DontDestroyOnLoad(this);
-            Log.Info(ArchitectureCore.SystemCount);
         }
 
         private void Start( )
