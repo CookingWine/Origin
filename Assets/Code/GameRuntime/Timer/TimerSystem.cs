@@ -74,7 +74,7 @@ namespace RuntimeLogic
             return timerTick;
         }
 
-        public int AddTimer(TimerCallback callback , float delay , bool isLoop = false , bool isUnscaled = false , params object[] args)
+        public int AddTimer(float delay , TimerCallback callback , bool isLoop = false , bool isUnscaled = false , params object[] args)
         {
             Timer timer = new Timer( )
             {

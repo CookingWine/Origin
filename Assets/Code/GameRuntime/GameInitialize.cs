@@ -4,6 +4,8 @@ using UnityEngine;
 using OriginRuntime;
 using RuntimeLogic.Resource;
 using OriginRuntime.Resource;
+using OriginRuntime.ObjectPool;
+using RuntimeLogic.ObjectPool;
 namespace RuntimeLogic
 {
     /// <summary>
@@ -50,7 +52,9 @@ namespace RuntimeLogic
 
             //构建循环周期
             BuildingCyclePeriod( );
+            Application.lowMemory += OnLowMemory;
             DontDestroyOnLoad(this);
+            Log.Info(ArchitectureCore.SystemCount);
         }
 
         private void Start( )
@@ -65,6 +69,7 @@ namespace RuntimeLogic
 
         private void OnApplicationQuit( )
         {
+            Application.lowMemory -= OnLowMemory;
             StopAllCoroutines( );
             ArchitectureCore.ShutdownArchitecture( );
             CustomPlayerLoop.UnCustomPlayerLoop( );
@@ -78,6 +83,7 @@ namespace RuntimeLogic
             ArchitectureCore.BindSystemSingleton<IMonoBehaviourDriver>(mono => new MonoDriver( ));
             ArchitectureCore.BindSystemSingleton<ITimerDriver>(times => new TimerSystem( ));
             ArchitectureCore.BindSystemSingleton<IResourceModule>(resource => new ResourceSystem( ));
+            ArchitectureCore.BindSystemSingleton<IObjectPoolManager>(pool => new ObjectPoolSystem( ));
         }
 
         /// <summary>
@@ -185,6 +191,13 @@ namespace RuntimeLogic
         {
             if(configSetting == null)
                 throw new GameFrameworkException("RuntimeConfigSetting is null");
+        }
+
+        private void OnLowMemory( )
+        {
+            Log.Info("Low memory reported...");
+            var objectPoolSystem = ArchitectureCore.GetSystem<IObjectPoolManager>( );
+            objectPoolSystem?.ReleaseAllUnused( );
         }
     }
 }

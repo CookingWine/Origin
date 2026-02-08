@@ -1,6 +1,6 @@
 using System;
 
-namespace OriginRuntime
+namespace OriginRuntime.ObjectPool
 {
     /// <summary>
     /// 对象基类。
@@ -97,7 +97,7 @@ namespace OriginRuntime
             {
                 return m_LastUseTime;
             }
-            internal set
+            set
             {
                 m_LastUseTime = value;
             }
@@ -175,14 +175,14 @@ namespace OriginRuntime
         /// <summary>
         /// 获取对象时的事件。
         /// </summary>
-        protected internal virtual void OnSpawn( )
+        public virtual void OnSpawn( )
         {
         }
 
         /// <summary>
         /// 回收对象时的事件。
         /// </summary>
-        protected internal virtual void OnUnspawn( )
+        public virtual void OnUnspawn( )
         {
         }
 
@@ -190,6 +190,6 @@ namespace OriginRuntime
         /// 释放对象。
         /// </summary>
         /// <param name="isShutdown">是否是关闭对象池时触发。</param>
-        protected internal abstract void Release(bool isShutdown);
+        public abstract void Release(bool isShutdown);
     }
 }

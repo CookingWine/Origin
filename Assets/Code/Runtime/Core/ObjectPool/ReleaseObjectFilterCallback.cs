@@ -1,6 +1,6 @@
 using System;
 using System.Collections.Generic;
-namespace OriginRuntime
+namespace OriginRuntime.ObjectPool
 {
     /// <summary>
     /// 释放对象筛选函数。

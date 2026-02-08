@@ -1,6 +1,6 @@
 using System;
 
-namespace OriginRuntime
+namespace OriginRuntime.ObjectPool
 {
     /// <summary>
     /// 对象池接口。

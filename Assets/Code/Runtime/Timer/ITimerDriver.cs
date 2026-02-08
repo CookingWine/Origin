@@ -25,13 +25,13 @@ namespace OriginRuntime
         /// <summary>
         /// 添加一个计时器
         /// </summary>
-        /// <param name="callback">计时器回调</param>
         /// <param name="delay">等待时间</param>
+        /// <param name="callback">计时器回调</param>
         /// <param name="isLoop">是否循环</param>
         /// <param name="isUnscaled">是否受时间缩放影响</param>
         /// <param name="args">参数</param>
         /// <returns>计时器ID</returns>
-        public int AddTimer(TimerCallback callback , float delay , bool isLoop = false , bool isUnscaled = false , params object[] args);
+        public int AddTimer(float delay , TimerCallback callback , bool isLoop = false , bool isUnscaled = false , params object[] args);
 
         /// <summary>
         /// 暂停计时器

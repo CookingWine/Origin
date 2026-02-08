@@ -19,7 +19,7 @@ namespace RuntimeLogic
         /// </summary>
         public static Action OnCustomUpdate;
         /// <summary>
-        /// 帧尾收束
+        /// 帧尾逻辑
         /// </summary>
         public static Action OnCustomLateUpdate;
         /// <summary>

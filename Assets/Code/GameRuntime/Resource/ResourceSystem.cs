@@ -4,6 +4,7 @@ using UnityEngine;
 using OriginRuntime;
 using OriginRuntime.Resource;
 using Cysharp.Threading.Tasks;
+using OriginRuntime.ObjectPool;
 using System.Collections.Generic;
 namespace RuntimeLogic.Resource
 {
@@ -131,6 +132,7 @@ namespace RuntimeLogic.Resource
 
         public void Initialize( )
         {
+            SetObjectPoolManager(ArchitectureCore.GetSystem<IObjectPoolManager>( ));
             //初始化资源系统
             YooAssets.Initialize((YooAsset.ILogger)GameFrameworkLog.GetLogHelper( ));
             YooAssets.SetOperationSystemMaxTimeSlice(Milliseconds);
@@ -339,6 +341,15 @@ namespace RuntimeLogic.Resource
         {
             HostServerURL = defaultHostServer;
             FallbackHostServerURL = fallbackHostServer;
+        }
+
+        public void SetObjectPoolManager(IObjectPoolManager objectPoolManager)
+        {
+            if(objectPoolManager == null)
+            {
+                throw new GameFrameworkException("Object pool manager is invalid.");
+            }
+
         }
 
         public void UnloadUnusedAssets( )

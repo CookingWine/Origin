@@ -1,6 +1,6 @@
-using System;
-using YooAsset;
 using Cysharp.Threading.Tasks;
+using OriginRuntime.ObjectPool;
+using YooAsset;
 namespace OriginRuntime.Resource
 {
     /// <summary>
@@ -122,6 +122,12 @@ namespace OriginRuntime.Resource
         /// <param name="defaultHostServer">默认远端资源地址。</param>
         /// <param name="fallbackHostServer">备用远端资源地址。</param>
         void SetRemoteServicesUrl(string defaultHostServer , string fallbackHostServer);
+
+        /// <summary>
+        /// 设置对象池管理器。
+        /// </summary>
+        /// <param name="objectPoolManager">对象池管理器。</param>
+        public void SetObjectPoolManager(IObjectPoolManager objectPoolManager);
 
         /// <summary>
         /// 检查资源是否存在
