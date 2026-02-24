@@ -31,7 +31,7 @@ namespace OriginRuntime.Resource
         /// <summary>
         /// 资源加密方式。
         /// </summary>
-        EncryptionType EncryptionType { get; }
+        EncryptionType EncryptionTypes { get; }
 
         /// <summary>
         /// 是否边玩边下载。

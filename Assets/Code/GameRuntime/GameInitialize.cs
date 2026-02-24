@@ -85,6 +85,7 @@ namespace RuntimeLogic
             ArchitectureCore.BindSystemSingleton<IResourceModule>(resource => new ResourceSystem( ));
             ArchitectureCore.BindSystemSingleton<IObjectPoolManager>(pool => new ObjectPoolSystem( ));
             ArchitectureCore.BindSystemSingleton<IProcedureSystem>(procedure => new ProcedureSystem( ));
+            ArchitectureCore.BindSystemSingleton<ISettingSystem>(strring => new SettingSystem( ));
         }
 
         /// <summary>

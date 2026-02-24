@@ -10,13 +10,6 @@ namespace RuntimeLogic
     {
         private IFsmSystem m_FsmModule;
         private IFsm<IProcedureSystem> m_ProcedureFsm;
-
-        public ProcedureSystem( )
-        {
-            m_FsmModule = null;
-            m_ProcedureFsm = null;
-        }
-
         public int Priority => -2;
 
         public ProcedureBase CurrentProcedure
@@ -67,7 +60,7 @@ namespace RuntimeLogic
             ChangeProcedure( );
             m_ProcedureFsm.Start(procedureType);
         }
-
+          
         public void StartProcedure<T>( ) where T : ProcedureBase
         {
             ChangeProcedure( );

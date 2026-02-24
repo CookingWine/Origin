@@ -23,7 +23,7 @@ namespace RuntimeLogic.Resource
 
         public EPlayMode GamePlayMode { get; private set; }
 
-        public EncryptionType EncryptionType { get; private set; }
+        public EncryptionType EncryptionTypes { get; private set; }
 
         public bool UpdatableWhilePlaying { get; private set; }
 
@@ -115,7 +115,7 @@ namespace RuntimeLogic.Resource
         {
             RuntimeResourceSetting resourceSetting = Resources.Load<RuntimeResourceSetting>("Origin/RuntimeResourceSetting");
             GamePlayMode = resourceSetting.GamePlayMode;
-            EncryptionType = resourceSetting.EncryptionType;
+            EncryptionTypes = resourceSetting.EncryptionType;
             DefaultPackageName = resourceSetting.DefaultPackageName;
             UpdatableWhilePlaying = resourceSetting.UpdatableWhilePlaying;
             DownloadingMaxNum = resourceSetting.DownloadingMaxNum;
@@ -395,7 +395,7 @@ namespace RuntimeLogic.Resource
         /// </summary>
         private IDecryptionServices CreateDecryptionServices( )
         {
-            return EncryptionType switch
+            return EncryptionTypes switch
             {
                 EncryptionType.FileOffSet => new FileOffsetDecryption( ),
                 EncryptionType.FileStream => new FileStreamDecryption( ),
@@ -409,7 +409,7 @@ namespace RuntimeLogic.Resource
         /// <returns></returns>
         private IWebDecryptionServices CreateWebDecryptionServices( )
         {
-            return EncryptionType switch
+            return EncryptionTypes switch
             {
                 EncryptionType.FileOffSet => new FileOffsetWebDecryption( ),
                 EncryptionType.FileStream => new FileStreamWebDecryption( ),

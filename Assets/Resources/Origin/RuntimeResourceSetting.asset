@@ -20,8 +20,8 @@ MonoBehaviour:
   m_PerformGCCollect: 0
   m_MinUnloadUnusedAssetsInterval: 30
   m_MaxUnloadUnusedAssetsInterval: 60
+  m_Milliseconds: 60
   m_UseSystemUnloadUnusedAssets: 1
   m_HostServerURL: 
   m_FallbackHostServerURL: 
-  m_DefaultPackageName: DefaultPackage
-  m_Milliseconds: 60
+  m_DefaultPackageName: GameOriginPackage
