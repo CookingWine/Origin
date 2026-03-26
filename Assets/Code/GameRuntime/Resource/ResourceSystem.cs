@@ -56,6 +56,9 @@ namespace RuntimeLogic.Resource
 
         #region 
 
+        /// <summary>
+        /// 异步操作
+        /// </summary>
         private AsyncOperation m_AsyncOperation = null;
 
         /// <summary>
@@ -112,7 +115,7 @@ namespace RuntimeLogic.Resource
 
 
         public void InitSystem( )
-        {
+        {                     
             RuntimeResourceSetting resourceSetting = Resources.Load<RuntimeResourceSetting>("Origin/RuntimeResourceSetting");
             GamePlayMode = resourceSetting.GamePlayMode;
             EncryptionTypes = resourceSetting.EncryptionType;
