@@ -1,0 +1,15 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root Version="v2025.8.28">
+  <Common ShowPackageView="True" ShowEditorAlias="True" UniqueBundleName="True" />
+  <Package PackageName="DefaultPackage" PackageDesc="默认资源包" AutoAddressable="False" SupportExtensionless="True" LocationToLower="True" IncludeAssetGUID="True" IgnoreRuleName="NormalIgnoreRule">
+    <Group GroupActiveRule="EnableGroup" GroupName="DLL" GroupDesc="" AssetTags="">
+      <Collector CollectPath="Assets/GameAssets/DLL" CollectGUID="ea1dd67918670904f9ca8561dbeaebb7" CollectType="MainAssetCollector" AddressRule="AddressByFileName" PackRule="PackDirectory" FilterRule="CollectAll" UserData="" AssetTags="" />
+    </Group>
+    <Group GroupActiveRule="EnableGroup" GroupName="Fonst" GroupDesc="" AssetTags="">
+      <Collector CollectPath="Assets/GameAssets/Fonts" CollectGUID="c02668f5e2dc5464990b4a607ebbdeaf" CollectType="MainAssetCollector" AddressRule="AddressByFileName" PackRule="PackDirectory" FilterRule="CollectAll" UserData="" AssetTags="" />
+    </Group>
+    <Group GroupActiveRule="EnableGroup" GroupName="Scene" GroupDesc="" AssetTags="">
+      <Collector CollectPath="Assets/GameAssets/Scene" CollectGUID="9756c44ab072e3547ab4b81db5619d32" CollectType="MainAssetCollector" AddressRule="AddressByFileName" PackRule="PackDirectory" FilterRule="CollectAll" UserData="" AssetTags="" />
+    </Group>
+  </Package>
+</root>
