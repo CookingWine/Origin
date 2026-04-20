@@ -1,7 +1,16 @@
 {
     "name": "Origin",
     "rootNamespace": "",
-    "references": [],
+    "references": [
+        "GUID:4af576a9111e3f74bb3f8ce486a88331",
+        "GUID:13ba8ce62aa80c74598530029cb2d649",
+        "GUID:3ca842002c51d0a43b73e45298809a13",
+        "GUID:4140bd2e2764f1f47ab93125ecb61942",
+        "GUID:f51ebe6a0ceec4240a699833d6309b23",
+        "GUID:e34a5702dd353724aa315fb8011f08c3",
+        "GUID:2a81c6962524d424a8ef5072bd3b0fa0",
+        "GUID:6055be8ebefd69e48b49212b09b47b2f"
+    ],
     "includePlatforms": [],
     "excludePlatforms": [],
     "allowUnsafeCode": true,
