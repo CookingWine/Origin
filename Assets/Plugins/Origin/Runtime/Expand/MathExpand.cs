@@ -2,12 +2,12 @@ using System;
 using UnityEngine;
 using System.Collections.Generic;
 
-namespace Origin.Utility
+namespace Origin.Expand
 {
     /// <summary>
     /// Math扩展
     /// </summary>
-    public static class MathUtility
+    public static class MathExpand
     {
         /// <summary>
         /// 保留小数指定位数

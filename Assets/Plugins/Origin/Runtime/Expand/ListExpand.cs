@@ -2,12 +2,12 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Origin.Utility
+namespace Origin.Expand
 {
     /// <summary>
     /// list 扩展
     /// </summary>
-    public static class ListUtility
+    public static class ListExpand
     {
         /// <summary>
         /// 随机获取一个元素

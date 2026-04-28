@@ -4,9 +4,9 @@ using System.Text;
 using System.Collections;
 using System.Collections.Generic;
 
-namespace Origin.Utility
+namespace Origin.Expand
 {
-    public static class UnityEngineUtility
+    public static class UnityEngineExpand
     {
         ///<summary>获取组件，不存在则添加</summary>
         public static T GetOrAddComponent<T>(this GameObject go) where T : Component
